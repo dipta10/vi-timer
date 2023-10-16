@@ -1,19 +1,19 @@
-import { Payment, columns } from './columns';
+import { Todo, columns } from './columns';
 import { DataTable } from './data-table';
 
-function getData(): Payment[] {
+function getData(): Todo[] {
   // Fetch data from your API here.
   return [
     {
       id: '728ed52f',
-      amount: 100,
-      status: 'pending',
+      timeSpent: 100,
+      status: true,
       title: 'react - get the basics',
     },
     {
       id: '728ed523',
-      amount: 100,
-      status: 'pending',
+      timeSpent: 100,
+      status: false,
       title: 'python - unit testing',
     },
     // ...
