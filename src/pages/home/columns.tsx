@@ -1,4 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { Checkbox } from '@/components/ui/checkbox';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -14,7 +15,12 @@ export const columns: ColumnDef<Todo>[] = [
     accessorKey: 'status',
     header: 'Status',
     cell: ({ row }) => {
-      return <div className='text-left'>{String(row.getValue('status'))}</div>;
+      const done: boolean = row.getValue('status');
+      return (
+        <div className='text-left'>
+          <Checkbox checked={done} />
+        </div>
+      );
     },
   },
   {
@@ -22,7 +28,6 @@ export const columns: ColumnDef<Todo>[] = [
     header: () => <div className='text-left'>Email</div>,
     cell: ({ row }) => {
       const email = String(row.getValue('title'));
-
       return <div className='text-left font-medium'>{email}</div>;
     },
   },
