@@ -9,12 +9,14 @@ function getData(): Todo[] {
       timeSpent: 100,
       status: true,
       title: 'react - get the basics',
+      focused: false,
     },
     {
       id: '728ed523',
       timeSpent: 100,
       status: false,
       title: 'python - unit testing',
+      focused: true,
     },
     // ...
   ];
@@ -22,6 +24,7 @@ function getData(): Todo[] {
 
 export default function Home() {
   const data = getData();
+  console.log('data is', data);
 
   return (
     <div className='container mx-auto py-10'>

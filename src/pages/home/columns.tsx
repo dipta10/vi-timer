@@ -8,9 +8,17 @@ export type Todo = {
   timeSpent: number;
   status: boolean;
   title: string;
+  focused?: boolean;
 };
 
-export const columns: ColumnDef<Todo>[] = [
+export type TodoColumns = {
+  id: string;
+  timeSpent: number;
+  status: boolean;
+  title: string;
+};
+
+export const columns: ColumnDef<TodoColumns>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
@@ -25,19 +33,19 @@ export const columns: ColumnDef<Todo>[] = [
   },
   {
     accessorKey: 'title',
-    header: () => <div className='text-left'>Email</div>,
+    header: () => <div className='text-left'>Title</div>,
     cell: ({ row }) => {
       const email = String(row.getValue('title'));
-      return <div className='text-left font-medium'>{email}</div>;
+      const focused = (row.original as Todo).focused;
+      return <div className='text-left font-medium'>{email} - {focused ? 'focused': 'not focused'}</div>;
     },
   },
   {
     accessorKey: 'timeSpent',
-    header: () => <div className='text-right'>Amount</div>,
+    header: () => <div className='text-right'>Spent</div>,
     cell: ({ row }) => {
       const timeSpent = parseFloat(row.getValue('timeSpent'));
-
       return <div className='text-right font-medium'>{timeSpent}</div>;
     },
-  },
+  }
 ];
