@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useEffect, useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -23,14 +24,38 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  // https://tanstack.com/table/v8/docs/examples/react/row-selection
+  const [rowSelection, setRowSelection] = useState({});
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection: true,
+    state: {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      rowSelection: rowSelection,
+    },
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    onRowSelectionChange: setRowSelection,
   });
+
+  useEffect(() => {
+    if (data.length != 0) {
+      setRowSelection({ 0: true });
+    }
+  }, []);
+
+  const onClickButton = () => {
+    const selected = parseInt(Object.keys(rowSelection)[0]);
+    setRowSelection({ [(selected + 1) % data.length]: true });
+  };
 
   return (
     <div className='rounded-md border'>
+      <button onClick={onClickButton}>next</button>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -56,18 +81,29 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
+                className={row.getIsSelected() ? 'bg-slate-800' : ''}
+                onClick={() => {
+                  setRowSelection({});
+                  row.toggleSelected();
+                }}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                  // console.log(`${row.getValue('title')} - ${row.getIsSelected()}`);
+                  return (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className='h-24 text-center'>
-                No results.
+                No Todos Yet!
               </TableCell>
             </TableRow>
           )}

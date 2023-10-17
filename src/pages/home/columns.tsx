@@ -8,17 +8,9 @@ export type Todo = {
   timeSpent: number;
   status: boolean;
   title: string;
-  focused?: boolean;
 };
 
-export type TodoColumns = {
-  id: string;
-  timeSpent: number;
-  status: boolean;
-  title: string;
-};
-
-export const columns: ColumnDef<TodoColumns>[] = [
+export const columns: ColumnDef<Todo>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
@@ -36,8 +28,7 @@ export const columns: ColumnDef<TodoColumns>[] = [
     header: () => <div className='text-left'>Title</div>,
     cell: ({ row }) => {
       const email = String(row.getValue('title'));
-      const focused = (row.original as Todo).focused;
-      return <div className='text-left font-medium'>{email} - {focused ? 'focused': 'not focused'}</div>;
+      return <div className='text-left font-medium'>{email}</div>;
     },
   },
   {
