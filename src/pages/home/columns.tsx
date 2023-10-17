@@ -1,5 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
+import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -27,8 +28,14 @@ export const columns: ColumnDef<Todo>[] = [
     accessorKey: 'title',
     header: () => <div className='text-left'>Title</div>,
     cell: ({ row }) => {
-      const email = String(row.getValue('title'));
-      return <div className='text-left font-medium'>{email}</div>;
+      const title = String(row.getValue('title'));
+      return (
+        <div className='text-left font-medium'>
+          {title}
+          {/*show this on hover*/}
+          <EditTaskDialog title={title} />
+        </div>
+      );
     },
   },
   {
@@ -38,5 +45,5 @@ export const columns: ColumnDef<Todo>[] = [
       const timeSpent = parseFloat(row.getValue('timeSpent'));
       return <div className='text-right font-medium'>{timeSpent}</div>;
     },
-  }
+  },
 ];
