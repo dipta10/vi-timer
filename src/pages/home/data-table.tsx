@@ -14,6 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -46,16 +47,25 @@ export function DataTable<TData, TValue>({
     if (data.length != 0) {
       setRowSelection({ 0: true });
     }
-  }, []);
+  }, [data.length]);
 
-  const onClickButton = () => {
+  const onClickDown = () => {
     const selected = parseInt(Object.keys(rowSelection)[0]);
     setRowSelection({ [(selected + 1) % data.length]: true });
   };
 
+  const onClickUp = () => {
+    const selected = parseInt(Object.keys(rowSelection)[0]);
+    setRowSelection({ [(selected - 1 + data.length) % data.length]: true });
+  };
+
+  useHotkeys('down', () => onClickDown());
+  useHotkeys('j', () => onClickDown());
+  useHotkeys('up', () => onClickUp());
+  useHotkeys('k', () => onClickUp());
+
   return (
     <div className='rounded-md border'>
-      <button onClick={onClickButton}>next</button>
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
