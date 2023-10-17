@@ -1,6 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
-import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -33,7 +32,6 @@ export const columns: ColumnDef<Todo>[] = [
         <div className='text-left font-medium'>
           {title}
           {/*show this on hover*/}
-          <EditTaskDialog title={title} />
         </div>
       );
     },

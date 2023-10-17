@@ -20,7 +20,7 @@ function getData(): Todo[] {
       id: '728ed525',
       timeSpent: 100,
       status: false,
-      title: 'python - unit testing',
+      title: 'python - pytest',
     },
     // ...
   ];

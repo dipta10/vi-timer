@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -27,6 +28,8 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   // https://tanstack.com/table/v8/docs/examples/react/row-selection
   const [rowSelection, setRowSelection] = useState({});
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedTitle, setSelectedTitle] = useState('');
 
   const table = useReactTable({
     data,
@@ -63,6 +66,15 @@ export function DataTable<TData, TValue>({
   useHotkeys('j', () => onClickDown());
   useHotkeys('up', () => onClickUp());
   useHotkeys('k', () => onClickUp());
+  useHotkeys('e', () => onOpenDialog());
+
+  const onOpenDialog = () => {
+    const rowModel = table.getSelectedRowModel();
+    const row = rowModel.rows[0];
+    const title = row.getValue('title');
+    setSelectedTitle(title as string);
+    setDialogOpen(true);
+  };
 
   return (
     <div className='rounded-md border'>
@@ -95,6 +107,7 @@ export function DataTable<TData, TValue>({
                 onClick={() => {
                   setRowSelection({});
                   row.toggleSelected();
+                  onOpenDialog();
                 }}
               >
                 {row.getVisibleCells().map((cell) => {
@@ -119,6 +132,11 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      <EditTaskDialog
+        title={selectedTitle}
+        open={dialogOpen}
+        setOpen={setDialogOpen}
+      />
     </div>
   );
 }

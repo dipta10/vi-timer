@@ -3,19 +3,19 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input.tsx';
 
 interface EditTaskProps {
   title: string;
   description?: string;
+  open: boolean;
+  setOpen: any;
 }
 
 export function EditTaskDialog(task: EditTaskProps) {
   return (
-    <Dialog>
-      <DialogTrigger>🚧</DialogTrigger>
+    <Dialog open={task.open} onOpenChange={task.setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Task</DialogTitle>
