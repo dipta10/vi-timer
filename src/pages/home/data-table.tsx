@@ -32,7 +32,6 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState('');
-
   const { currentTab, pushTab } = useTabStore();
 
   const table = useReactTable({
@@ -116,7 +115,7 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
-                className={row.getIsSelected() ? 'bg-slate-800' : ''}
+                className={row.getIsSelected() ? 'active-input' : ''}
                 onClick={() => {
                   setRowSelection({});
                   row.toggleSelected();

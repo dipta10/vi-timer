@@ -29,7 +29,7 @@ export const columns: ColumnDef<Todo>[] = [
     cell: ({ row }) => {
       const title = String(row.getValue('title'));
       return (
-        <div className='text-left font-medium'>
+        <div className='text-left'>
           {title}
           {/*show this on hover*/}
         </div>

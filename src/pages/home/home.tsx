@@ -36,8 +36,10 @@ export default function Home() {
   const data = getData();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
-  const { pushTab } = useTabStore();
-  useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick());
+  const { currentTab, pushTab } = useTabStore();
+  useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick(), {
+    enabled: currentTab === Tab.TASK_LIST,
+  });
 
   const onAddTaskBtnClick = () => {
     setTitle('');
