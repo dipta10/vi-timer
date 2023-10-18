@@ -21,7 +21,7 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    'prettier/prettier': 2,
+    'prettier/prettier': 1,
     'react/react-in-jsx-scope': 'off',
     'react/jsx-uses-react': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
