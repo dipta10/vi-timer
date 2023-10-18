@@ -7,6 +7,7 @@ import {
 import { Input } from '@/components/ui/input.tsx';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { useTabStore } from '@/pages/states/store.ts';
 
 interface EditTaskProps {
   title: string;
@@ -17,8 +18,16 @@ interface EditTaskProps {
 }
 
 export function EditTaskDialog(task: EditTaskProps) {
+  const { popTab } = useTabStore();
+
+  const onOpenChange = () => {
+    console.log('on open change called!');
+    task.setOpen((p: any) => !p);
+    popTab();
+  };
+
   return (
-    <Dialog open={task.open} onOpenChange={task.setOpen}>
+    <Dialog open={task.open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Task</DialogTitle>

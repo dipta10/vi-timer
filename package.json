@@ -24,7 +24,8 @@
     "react-hotkeys-hook": "^4.4.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
-    "ts-key-enum": "^2.0.12"
+    "ts-key-enum": "^2.0.12",
+    "zustand": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^20.8.6",

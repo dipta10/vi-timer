@@ -1,8 +1,11 @@
-import { Todo, columns } from './columns';
+import { columns, Todo } from './columns';
 import { DataTable } from './data-table';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button.tsx';
+import { Tab, useTabStore } from '@/pages/states/store.ts';
+import { useHotkeys } from 'react-hotkeys-hook';
+import { Key } from 'ts-key-enum';
 
 function getData(): Todo[] {
   // Fetch data from your API here.
@@ -33,10 +36,13 @@ export default function Home() {
   const data = getData();
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
+  const { pushTab } = useTabStore();
+  useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick());
 
   const onAddTaskBtnClick = () => {
     setTitle('');
     setOpen(true);
+    pushTab(Tab.ADD_TASK);
   };
 
   return (

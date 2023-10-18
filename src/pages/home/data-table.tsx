@@ -14,9 +14,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useEffect, useState } from 'react';
-import { useHotkeys, useHotkeysContext } from 'react-hotkeys-hook';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import { Key } from 'ts-key-enum';
+import { Tab, useTabStore } from '@/pages/states/store.ts';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -28,11 +29,11 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   // https://tanstack.com/table/v8/docs/examples/react/row-selection
-  // I'll need a state manager to maintain the scopes
-  const { toggleScope, enabledScopes, enableScope } = useHotkeysContext();
   const [rowSelection, setRowSelection] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState('');
+
+  const { currentTab, pushTab } = useTabStore();
 
   const table = useReactTable({
     data,
@@ -66,13 +67,13 @@ export function DataTable<TData, TValue>({
   };
 
   useHotkeys(`${Key.ArrowDown}, j`, () => onClickDown(), {
-    scopes: ['todo-list'],
+    enabled: currentTab === Tab.TASK_LIST,
   });
   useHotkeys('up, k', () => onClickUp(), {
-    scopes: ['todo-list'],
+    enabled: currentTab === Tab.TASK_LIST,
   });
   useHotkeys('e', () => onOpenDialog(), {
-    scopes: ['todo-list'],
+    enabled: currentTab === Tab.TASK_LIST,
   });
 
   const onOpenDialog = () => {
@@ -85,6 +86,7 @@ export function DataTable<TData, TValue>({
     const title = row.getValue('title');
     setSelectedTitle(title as string);
     setDialogOpen(true);
+    pushTab(Tab.EDIT_TASK);
   };
 
   return (
