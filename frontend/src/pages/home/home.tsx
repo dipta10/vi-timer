@@ -1,11 +1,12 @@
 import { columns, Todo } from './columns';
 import { DataTable } from './data-table';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button.tsx';
 import { Tab, useTabStore } from '@/pages/states/store.ts';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
+import { ProfileForm } from '@/components/custom/test-form.tsx';
 
 function getData(): Todo[] {
   // Fetch data from your API here.
@@ -49,14 +50,16 @@ export default function Home() {
 
   return (
     <div className='container mx-auto py-10'>
-      <Button onClick={onAddTaskBtnClick}>Add Task</Button>
-      <DataTable columns={columns} data={data} />
-      <EditTaskDialog
-        setTitle={setTitle}
-        title={title}
-        open={open}
-        setOpen={setOpen}
-      />
+      <ProfileForm />
+      <br/>
+      {/*<Button onClick={onAddTaskBtnClick}>Add Task</Button>*/}
+      {/*<DataTable columns={columns} data={data} />*/}
+      {/*<EditTaskDialog*/}
+      {/*  setTitle={setTitle}*/}
+      {/*  title={title}*/}
+      {/*  open={open}*/}
+      {/*  setOpen={setOpen}*/}
+      {/*/>*/}
     </div>
   );
 }

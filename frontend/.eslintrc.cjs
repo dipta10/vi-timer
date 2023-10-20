@@ -26,5 +26,7 @@ module.exports = {
     'react/jsx-uses-react': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-empty-function': 'off',
+    'no-unused-vars': 'off',
+    // 'noUnusedLocals': 'off',
   },
 };
