@@ -1,12 +1,12 @@
 import { columns, Todo } from './columns';
 import { DataTable } from './data-table';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button.tsx';
 import { Tab, useTabStore } from '@/pages/states/store.ts';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
-import { ProfileForm } from '@/components/custom/test-form.tsx';
+import axios from 'axios';
 
 function getData(): Todo[] {
   // Fetch data from your API here.
@@ -48,16 +48,26 @@ export default function Home() {
     pushTab(Tab.ADD_TASK);
   };
 
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:8000/todo')
+      .then(({ data }) => {
+        data.forEach((d: any) => (d.timeSpent = 200));
+
+        setTodos(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+
   return (
     <div className='container mx-auto py-10'>
       <Button onClick={onAddTaskBtnClick}>Add Task</Button>
-      <DataTable columns={columns} data={data} />
-      <EditTaskDialog
-        setTitle={setTitle}
-        title={title}
-        open={open}
-        setOpen={setOpen}
-      />
+      <DataTable columns={columns} data={todos} />
+      <EditTaskDialog title={title} open={open} setOpen={setOpen} />
     </div>
   );
 }

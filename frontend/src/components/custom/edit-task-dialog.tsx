@@ -27,7 +27,6 @@ import axios from 'axios';
 
 interface EditTaskProps {
   title: string;
-  setTitle?: any;
   description?: string;
   open: boolean;
   setOpen: any;
@@ -46,8 +45,18 @@ export function EditTaskDialog(task: EditTaskProps) {
   const [insertMode, setInsertMode] = useState(false);
   const numberOfActiveInput = 3;
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+    },
+  });
+
   useEffect(() => {
     setInsertMode(false);
+    form.setValue('title', task.title);
+    form.setValue('description', task.description as any);
     if (task.open && inputRefs.current.length > 0) {
       setActiveInput(0);
       // don't this this is needed?
@@ -113,14 +122,6 @@ export function EditTaskDialog(task: EditTaskProps) {
     },
   );
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-    },
-  });
-
   function onSubmit(value: z.infer<typeof formSchema>) {
     console.log(value);
     axios
@@ -129,10 +130,8 @@ export function EditTaskDialog(task: EditTaskProps) {
         console.log(res);
       })
       .catch((err) => console.log(err));
-  }
 
-  function onBtnClick() {
-    form.handleSubmit(onSubmit)();
+    onOpenChange();
   }
 
   const onOpenChange = () => {
@@ -145,11 +144,6 @@ export function EditTaskDialog(task: EditTaskProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Task</DialogTitle>
-          active input: {activeInput}
-          <br />
-          insert mode: {insertMode ? 'true' : 'false'}
-          <br />
-          currentTab: {currentTab}
         </DialogHeader>
 
         <Form {...form}>
@@ -165,7 +159,7 @@ export function EditTaskDialog(task: EditTaskProps) {
                       <Input
                         {...field}
                         disabled={true}
-                        placeholder='dipta10'
+                        placeholder='Title'
                         ref={(el) =>
                           (inputRefs.current[0] = el as HTMLInputElement)
                         }
