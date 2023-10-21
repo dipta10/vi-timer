@@ -50,16 +50,14 @@ export default function Home() {
 
   return (
     <div className='container mx-auto py-10'>
-      <ProfileForm />
-      <br/>
-      {/*<Button onClick={onAddTaskBtnClick}>Add Task</Button>*/}
-      {/*<DataTable columns={columns} data={data} />*/}
-      {/*<EditTaskDialog*/}
-      {/*  setTitle={setTitle}*/}
-      {/*  title={title}*/}
-      {/*  open={open}*/}
-      {/*  setOpen={setOpen}*/}
-      {/*/>*/}
+      <Button onClick={onAddTaskBtnClick}>Add Task</Button>
+      <DataTable columns={columns} data={data} />
+      <EditTaskDialog
+        setTitle={setTitle}
+        title={title}
+        open={open}
+        setOpen={setOpen}
+      />
     </div>
   );
 }

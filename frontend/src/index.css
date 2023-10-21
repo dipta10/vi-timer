@@ -75,11 +75,15 @@
   }
 }
 
-:focus {
-  /* for testing focus with hotkeys */
-  outline: 2px solid blue;
-}
+/*:focus {*/
+/*  !* for testing focus with hotkeys *!*/
+/*  outline: 2px solid blue;*/
+/*}*/
 
 .active-input {
   @apply border-2 border-blue-400 bg-slate-800
+}
+
+.active-button {
+  @apply border-2 border-blue-400
 }

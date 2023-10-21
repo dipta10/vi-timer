@@ -29,6 +29,10 @@ export function ProfileForm() {
     console.log(value);
   }
 
+  function onBtnClick() {
+    form.handleSubmit(onSubmit)();
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
@@ -36,6 +40,9 @@ export function ProfileForm() {
           control={form.control}
           name='title'
           render={({ field }) => {
+            if (field.value.length > 5) {
+              console.log('submitting');
+            }
             return (
               <FormItem>
                 <FormLabel>Title</FormLabel>
@@ -50,28 +57,7 @@ export function ProfileForm() {
             );
           }}
         />
-        <FormField
-          control={form.control}
-          name='description'
-          render={({ field }) => {
-            console.log(field);
-            if (field.value.length > 5) {
-              form.handleSubmit(onSubmit);
-            }
-            return (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder='description'
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            );
-          }}
-        />
+        <button>btn</button>
       </form>
     </Form>
   );
