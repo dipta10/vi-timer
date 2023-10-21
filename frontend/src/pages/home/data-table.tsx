@@ -32,6 +32,8 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState('');
+  const [selectedRowRef, setSelectedRowRef] =
+    useState<HTMLTableRowElement | null>(null);
   const { currentTab, pushTab } = useTabStore();
 
   const table = useReactTable({
@@ -55,20 +57,20 @@ export function DataTable<TData, TValue>({
     }
   }, [data.length]);
 
-  const onClickDown = () => {
+  const onPressDown = () => {
     const selected = parseInt(Object.keys(rowSelection)[0]);
     setRowSelection({ [(selected + 1) % data.length]: true });
   };
 
-  const onClickUp = () => {
+  const onPressUp = () => {
     const selected = parseInt(Object.keys(rowSelection)[0]);
     setRowSelection({ [(selected - 1 + data.length) % data.length]: true });
   };
 
-  useHotkeys(`${Key.ArrowDown}, j`, () => onClickDown(), {
+  useHotkeys(`${Key.ArrowDown}, j`, () => onPressDown(), {
     enabled: currentTab === Tab.TASK_LIST,
   });
-  useHotkeys('up, k', () => onClickUp(), {
+  useHotkeys('up, k', () => onPressUp(), {
     enabled: currentTab === Tab.TASK_LIST,
   });
   useHotkeys('e', () => onOpenDialog(), {
@@ -76,10 +78,6 @@ export function DataTable<TData, TValue>({
   });
 
   const onOpenDialog = () => {
-    // console.log('toggling todo-list scope');
-    // enableScope('edit-task');
-    // toggleScope('todo-list');
-    // console.log('enabled', enabledScopes);
     const rowModel = table.getSelectedRowModel();
     const row = rowModel.rows[0];
     const title = row.getValue('title');
@@ -87,6 +85,14 @@ export function DataTable<TData, TValue>({
     setDialogOpen(true);
     pushTab(Tab.EDIT_TASK);
   };
+
+  // useEffect to scroll to the selected tr element when the component mounts
+  useEffect(() => {
+    selectedRowRef?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    });
+  }, [selectedRowRef]);
 
   return (
     <div className='rounded-md border'>
@@ -111,30 +117,35 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
-                className={row.getIsSelected() ? 'active-input' : ''}
-                onClick={() => {
-                  setRowSelection({});
-                  row.toggleSelected();
-                  onOpenDialog();
-                }}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  // console.log(`${row.getValue('title')} - ${row.getIsSelected()}`);
-                  return (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))
+            table.getRowModel().rows.map((row) => {
+              return (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  className={row.getIsSelected() ? 'active-input' : ''}
+                  ref={(el) =>
+                    row.getIsSelected() ? setSelectedRowRef(el) : null
+                  }
+                  onClick={() => {
+                    setRowSelection({});
+                    row.toggleSelected();
+                    onOpenDialog();
+                  }}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    // console.log(`${row.getValue('title')} - ${row.getIsSelected()}`);
+                    return (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className='h-24 text-center'>

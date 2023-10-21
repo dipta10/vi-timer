@@ -30,4 +30,7 @@ model Todo {
   updateAt    DateTime @updatedAt
   title       String   @db.VarChar(255)
   description String?  @db.VarChar(255)
+  done        Boolean  @default(false)
+  timeSpent   Int      @default(0)
+  isDeleted   Boolean  @default(false)
 }

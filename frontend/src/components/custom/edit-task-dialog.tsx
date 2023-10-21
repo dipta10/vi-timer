@@ -34,7 +34,7 @@ interface EditTaskProps {
 
 const formSchema = z.object({
   title: z.string().min(2).max(1000),
-  description: z.string(),
+  description: z.string().min(0).optional(),
 });
 
 export function EditTaskDialog(task: EditTaskProps) {
@@ -132,6 +132,7 @@ export function EditTaskDialog(task: EditTaskProps) {
       .catch((err) => console.log(err));
 
     onOpenChange();
+    form.clearErrors();
   }
 
   const onOpenChange = () => {
@@ -143,7 +144,7 @@ export function EditTaskDialog(task: EditTaskProps) {
     <Dialog open={task.open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Task</DialogTitle>
+          <DialogTitle>Edit Todo</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -197,7 +198,7 @@ export function EditTaskDialog(task: EditTaskProps) {
               className={activeInput === 2 ? 'active-button' : ''}
               onClick={form.handleSubmit(onSubmit)}
             >
-              Save Task
+              Save Todo
             </Button>
           </form>
         </Form>

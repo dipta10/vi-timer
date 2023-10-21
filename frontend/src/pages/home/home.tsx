@@ -61,7 +61,7 @@ export default function Home() {
       .catch((err) => {
         console.log(err);
       });
-  });
+  }, [currentTab]);
 
   return (
     <div className='container mx-auto py-10'>
