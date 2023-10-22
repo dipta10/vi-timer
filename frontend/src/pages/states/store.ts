@@ -6,6 +6,20 @@ export enum Tab {
   ADD_TASK,
 }
 
+export type TodoEntity = {
+  id: string;
+  title: string;
+  description?: string;
+  status: boolean;
+  timeSpent: number;
+};
+
+export type TodoState = {
+  todos: TodoEntity[];
+  setTodos: (todos: TodoEntity[]) => void;
+  // getTodos: () => TodoEntity[];
+};
+
 export interface TabState {
   currentTab: Tab;
   tabHistory: Tab[];
@@ -36,6 +50,16 @@ export const useTabStore = create<TabState>()((set) => ({
       return {
         currentTab: tab,
         tabHistory: tabHistory.slice(0, tabHistory.length - 1),
+      };
+    }),
+}));
+
+export const useTodoStore = create<TodoState>()((set) => ({
+  todos: [],
+  setTodos: (todos) =>
+    set(() => {
+      return {
+        todos: todos,
       };
     }),
 }));

@@ -10,6 +10,15 @@ export type Todo = {
   title: string;
 };
 
+// Function to convert seconds to formatted time
+const secondsToHms = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${hours}h ${minutes}m ${remainingSeconds}s`;
+};
+
 export const columns: ColumnDef<Todo>[] = [
   {
     accessorKey: 'status',
@@ -41,7 +50,9 @@ export const columns: ColumnDef<Todo>[] = [
     header: () => <div className='text-right'>Spent</div>,
     cell: ({ row }) => {
       const timeSpent = parseFloat(row.getValue('timeSpent'));
-      return <div className='text-right font-medium'>{timeSpent}</div>;
+      const value = secondsToHms(timeSpent);
+      console.log(`for ${timeSpent} val is: ${value}`);
+      return <div className='text-right font-medium'>{value}</div>;
     },
   },
 ];
