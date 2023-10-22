@@ -91,9 +91,29 @@ export function DataTable<TValue>({
       if (!found) {
         throw new Error('todo not found for toggling done');
       }
-      console.log('found', found);
       toggleTodo(found.id);
       toggleDoneApi(found);
+      setToggling(false);
+    },
+    {
+      enabled: currentTab === Tab.TASK_LIST,
+      ignoreEventWhen: () => {
+        return toggling;
+      },
+    },
+  );
+  useHotkeys(
+    `t`,
+    () => {
+      // because of duplicate key activation
+      // https://github.com/JohannesKlauss/react-hotkeys-hook/issues/1013
+      setToggling(true);
+      const found = getSelectedTodo();
+      if (!found) {
+        throw new Error('todo not found for toggling done');
+      }
+      // toggleTodo(found.id);
+      toggleTimerApi(found);
       setToggling(false);
     },
     {
@@ -123,6 +143,15 @@ export function DataTable<TValue>({
   const toggleDoneApi = (value: Partial<TodoEntity>) => {
     axios
       .put(`http://localhost:8000/todo/${value.id}/toggle-done`, {})
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const toggleTimerApi = (value: Partial<TodoEntity>) => {
+    axios
+      .post(`http://localhost:8000/todo/${value.id}/toggle-timer`, {})
       .then((res) => {
         console.log(res);
       })

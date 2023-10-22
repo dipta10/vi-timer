@@ -16,11 +16,12 @@ export const columns: ColumnDef<TodoEntity>[] = [
     cell: ({ row }) => {
       const title = String(row.getValue('title'));
       const done = row.original.done;
+      const running = row.original.running ? 'running' : 'NOT running';
       let className = '';
       if (done) {
         className = 'line-through opacity-50';
       }
-      return <div className={`text-left ${className}`}>{title}</div>;
+      return <div className={`text-left ${className}`}>{title + ' (' + running + ')'}</div>;
     },
   },
   {

@@ -26,12 +26,24 @@ model Project {
 }
 
 model Todo {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updateAt    DateTime @updatedAt
-  title       String
-  description String?
-  done        Boolean  @default(false)
-  timeSpent   Int      @default(0)
-  isDeleted   Boolean  @default(false)
+  id           String         @id @default(uuid())
+  createdAt    DateTime       @default(now())
+  updateAt     DateTime       @updatedAt
+  title        String
+  description  String?
+  done         Boolean        @default(false)
+  timeSpent    Int            @default(0)
+  isDeleted    Boolean        @default(false)
+  running      Boolean        @default(false)
+  TimeTracking TimeTracking[]
+}
+
+model TimeTracking {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updateAt  DateTime  @updatedAt
+  todo      Todo      @relation(fields: [todoId], references: [id])
+  todoId    String
+  startTime DateTime  @default(now())
+  endTime   DateTime?
 }

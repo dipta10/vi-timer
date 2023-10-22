@@ -14,6 +14,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node dist/index.js",
+    "dbg": "nodemon index.ts",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
     "debug": "nodemon dist/index.js",
     "ts-config": "tsc --showConfig",
@@ -42,6 +43,7 @@
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
     "prisma": "^4.16.1",
+    "ts-node": "^10.9.1",
     "typescript": "*"
   }
 }

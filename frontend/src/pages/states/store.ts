@@ -13,6 +13,7 @@ export type TodoEntity = {
   status: boolean;
   timeSpent: number;
   done: boolean;
+  running: boolean;
 };
 
 export type TodoState = {
