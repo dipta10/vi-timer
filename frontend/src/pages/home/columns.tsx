@@ -51,7 +51,6 @@ export const columns: ColumnDef<Todo>[] = [
     cell: ({ row }) => {
       const timeSpent = parseFloat(row.getValue('timeSpent'));
       const value = secondsToHms(timeSpent);
-      console.log(`for ${timeSpent} val is: ${value}`);
       return <div className='text-right font-medium'>{value}</div>;
     },
   },

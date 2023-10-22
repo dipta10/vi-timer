@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Tab, useTabStore } from '@/pages/states/store.ts';
+import { Tab, TodoEntity, useTabStore } from '@/pages/states/store.ts';
 import { useEffect, useRef, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
@@ -23,13 +23,12 @@ import {
 } from '@/components/ui/form.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
-import axios from 'axios';
 
 interface EditTaskProps {
-  title: string;
-  description?: string;
+  todo?: TodoEntity;
   open: boolean;
   setOpen: any;
+  onSubmitForm: (todo: Partial<TodoEntity>) => void;
 }
 
 const formSchema = z.object({
@@ -37,11 +36,10 @@ const formSchema = z.object({
   description: z.string().min(0).optional(),
 });
 
-export function EditTaskDialog(task: EditTaskProps) {
-  const { popTab } = useTabStore();
+export function EditTaskDialog(prop: EditTaskProps) {
+  const { popTab, currentTab, tabHistory } = useTabStore();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const [activeInput, setActiveInput] = useState(0);
-  const { currentTab } = useTabStore();
   const [insertMode, setInsertMode] = useState(false);
   const numberOfActiveInput = 3;
 
@@ -55,14 +53,13 @@ export function EditTaskDialog(task: EditTaskProps) {
 
   useEffect(() => {
     setInsertMode(false);
-    form.setValue('title', task.title);
-    form.setValue('description', task.description as any);
-    if (task.open && inputRefs.current.length > 0) {
+    form.setValue('title', prop.todo?.title ?? '');
+    form.setValue('description', prop.todo?.description ?? '');
+    if (prop.open && inputRefs.current.length > 0) {
       setActiveInput(0);
-      // don't this this is needed?
       inputRefs.current[0]?.focus();
     }
-  }, [task.open]);
+  }, [prop.open]);
 
   useHotkeys(
     `${Key.ArrowDown}, j`,
@@ -70,7 +67,7 @@ export function EditTaskDialog(task: EditTaskProps) {
       setActiveInput((p) => (p + 1) % numberOfActiveInput);
     },
     {
-      enabled: currentTab === Tab.ADD_TASK && !insertMode,
+      enabled: currentTab === Tab.ADD_TASK && !insertMode && prop.open,
     },
   );
 
@@ -82,32 +79,45 @@ export function EditTaskDialog(task: EditTaskProps) {
       );
     },
     {
-      enabled: currentTab === Tab.ADD_TASK && !insertMode,
+      enabled: currentTab === Tab.ADD_TASK && !insertMode && prop.open,
     },
   );
 
   useHotkeys(
-    `${Key.Control}+${Key.Enter}, ${Key.Escape}`,
+    `${Key.Control}+${Key.Enter}`,
     () => {
       setInsertMode(false);
       inputRefs.current[activeInput].setAttribute('disabled', 'disabled');
     },
     {
-      enabled: currentTab === Tab.ADD_TASK && insertMode,
+      enabled: currentTab === Tab.ADD_TASK && insertMode && prop.open,
       enableOnContentEditable: true,
       enableOnFormTags: true,
+      preventDefault: true,
     },
   );
 
-  // // need to prevent the default behaviour of the dialog first
-  // useHotkeys(Key.Escape, () => {
-  //   console.log('escape pressed');
-  // });
+  useHotkeys(
+    Key.Escape,
+    () => {
+      if (insertMode) {
+        setInsertMode(false);
+        inputRefs.current[activeInput].setAttribute('disabled', 'disabled');
+      } else {
+        onOpenChange();
+      }
+    },
+    {
+      enabled: currentTab === Tab.ADD_TASK && prop.open,
+      enableOnContentEditable: true,
+      enableOnFormTags: true,
+      preventDefault: true,
+    },
+  );
 
   useHotkeys(
     `${Key.Enter}`,
     () => {
-      console.log('inputRefs', inputRefs);
       if (activeInput == 2) {
         form.handleSubmit(onSubmit)();
         return;
@@ -123,30 +133,31 @@ export function EditTaskDialog(task: EditTaskProps) {
   );
 
   function onSubmit(value: z.infer<typeof formSchema>) {
-    console.log(value);
-    axios
-      .post('http://localhost:8000/todo', value)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
-
+    prop.onSubmitForm({
+      id: prop.todo?.id,
+      title: value.title,
+      description: value.description,
+      status: true,
+      timeSpent: 0,
+    });
     onOpenChange();
     form.clearErrors();
   }
 
   const onOpenChange = () => {
-    task.setOpen((p: any) => !p);
+    prop.setOpen((p: any) => !p);
     popTab();
   };
 
   return (
-    <Dialog open={task.open} onOpenChange={onOpenChange}>
+    <Dialog open={prop.open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Todo</DialogTitle>
         </DialogHeader>
-
+        current tab: {currentTab}
+        <br />
+        tab history: {tabHistory}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormField
@@ -160,7 +171,6 @@ export function EditTaskDialog(task: EditTaskProps) {
                       <Input
                         {...field}
                         disabled={true}
-                        placeholder='Title'
                         ref={(el) =>
                           (inputRefs.current[0] = el as HTMLInputElement)
                         }
@@ -183,7 +193,6 @@ export function EditTaskDialog(task: EditTaskProps) {
                       <Textarea
                         {...field}
                         disabled={true}
-                        placeholder='description'
                         ref={(el) => (inputRefs.current[1] = el as any)}
                         className={activeInput === 1 ? 'active-input' : ''}
                       />

@@ -6,7 +6,11 @@ const router = Router();
 const prisma = new PrismaClient();
 
 router.get('/', async (_, res: Response) => {
-  const todos = await prisma.todo.findMany();
+  const todos = await prisma.todo.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
 
   res.json(todos);
 });
@@ -16,7 +20,22 @@ router.post('/', async (req: Request, res: Response) => {
     data: {
       title: req.body.title,
       description: req.body.description,
-      projectId: req.body.projectId,
+    },
+  });
+
+  res.json({
+    data: entry,
+  });
+});
+
+router.put('/', async (req: Request, res: Response) => {
+  const entry = await prisma.todo.update({
+    where: {
+      id: req.body.id,
+    },
+    data: {
+      title: req.body.title,
+      description: req.body.description,
     },
   });
 

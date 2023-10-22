@@ -17,21 +17,22 @@ import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import { Key } from 'ts-key-enum';
-import { Tab, useTabStore } from '@/pages/states/store.ts';
+import { Tab, TodoEntity, useTabStore } from '@/pages/states/store.ts';
+import axios from 'axios';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TodoEntity, TValue>) {
   // https://tanstack.com/table/v8/docs/examples/react/row-selection
   const [rowSelection, setRowSelection] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedTitle, setSelectedTitle] = useState('');
+  const [selectedTodo, setSelectedTodo] = useState<TodoEntity | null>(null);
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab, pushTab } = useTabStore();
@@ -73,17 +74,31 @@ export function DataTable<TData, TValue>({
   useHotkeys('up, k', () => onPressUp(), {
     enabled: currentTab === Tab.TASK_LIST,
   });
-  useHotkeys('e', () => onOpenDialog(), {
+  useHotkeys(`e, ${Key.Enter}`, () => onOpenDialog(), {
     enabled: currentTab === Tab.TASK_LIST,
+    preventDefault: true
   });
 
   const onOpenDialog = () => {
     const rowModel = table.getSelectedRowModel();
     const row = rowModel.rows[0];
-    const title = row.getValue('title');
-    setSelectedTitle(title as string);
+    const id = row.original.id;
+    const found = data.find((d) => d.id === id);
+    if (found) {
+      setSelectedTodo(found);
+    }
     setDialogOpen(true);
-    pushTab(Tab.EDIT_TASK);
+    pushTab(Tab.ADD_TASK);
+  };
+
+  const editTodo = (value: Partial<TodoEntity>) => {
+    console.log('value', value);
+    axios
+      .put('http://localhost:8000/todo', value)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
   };
 
   // useEffect to scroll to the selected tr element when the component mounts
@@ -156,9 +171,10 @@ export function DataTable<TData, TValue>({
         </TableBody>
       </Table>
       <EditTaskDialog
-        title={selectedTitle}
+        todo={selectedTodo as TodoEntity}
         open={dialogOpen}
         setOpen={setDialogOpen}
+        onSubmitForm={editTodo}
       />
     </div>
   );

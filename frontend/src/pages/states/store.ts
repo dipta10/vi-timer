@@ -17,7 +17,6 @@ export type TodoEntity = {
 export type TodoState = {
   todos: TodoEntity[];
   setTodos: (todos: TodoEntity[]) => void;
-  // getTodos: () => TodoEntity[];
 };
 
 export interface TabState {
