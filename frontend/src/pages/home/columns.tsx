@@ -1,16 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Checkbox } from '@/components/ui/checkbox';
+import { TodoEntity } from '@/pages/states/store.ts';
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Todo = {
-  id: string;
-  timeSpent: number;
-  status: boolean;
-  title: string;
-};
-
-// Function to convert seconds to formatted time
 const secondsToHms = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -19,30 +9,18 @@ const secondsToHms = (seconds: number) => {
   return `${hours}h ${minutes}m ${remainingSeconds}s`;
 };
 
-export const columns: ColumnDef<Todo>[] = [
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ row }) => {
-      const done: boolean = row.getValue('status');
-      return (
-        <div className='text-left'>
-          <Checkbox checked={done} />
-        </div>
-      );
-    },
-  },
+export const columns: ColumnDef<TodoEntity>[] = [
   {
     accessorKey: 'title',
     header: () => <div className='text-left'>Title</div>,
     cell: ({ row }) => {
       const title = String(row.getValue('title'));
-      return (
-        <div className='text-left'>
-          {title}
-          {/*show this on hover*/}
-        </div>
-      );
+      const done = row.original.done;
+      let className = '';
+      if (done) {
+        className = 'line-through opacity-50';
+      }
+      return <div className={`text-left ${className}`}>{title}</div>;
     },
   },
   {
@@ -51,7 +29,12 @@ export const columns: ColumnDef<Todo>[] = [
     cell: ({ row }) => {
       const timeSpent = parseFloat(row.getValue('timeSpent'));
       const value = secondsToHms(timeSpent);
-      return <div className='text-right font-medium'>{value}</div>;
+      const done = row.original.done;
+      let className = '';
+      if (done) {
+        className = 'line-through opacity-50';
+      }
+      return <div className={`text-right font-medium ${className}`}>{value}</div>;
     },
   },
 ];

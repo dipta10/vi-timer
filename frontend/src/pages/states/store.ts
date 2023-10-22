@@ -12,11 +12,13 @@ export type TodoEntity = {
   description?: string;
   status: boolean;
   timeSpent: number;
+  done: boolean;
 };
 
 export type TodoState = {
   todos: TodoEntity[];
   setTodos: (todos: TodoEntity[]) => void;
+  toggleTodo: (id: string) => void;
 };
 
 export interface TabState {
@@ -61,4 +63,16 @@ export const useTodoStore = create<TodoState>()((set) => ({
         todos: todos,
       };
     }),
+  toggleTodo: (id) => {
+    set((state) => {
+      const todo = state.todos.find((t) => t.id === id);
+      if (!todo) return state;
+
+      todo.done = !todo.done;
+      return {
+        ...state,
+        todos: [...state.todos],
+      };
+    });
+  },
 }));

@@ -28,10 +28,11 @@ router.post('/', async (req: Request, res: Response) => {
   });
 });
 
-router.put('/', async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
   const entry = await prisma.todo.update({
     where: {
-      id: req.body.id,
+      id,
     },
     data: {
       title: req.body.title,
@@ -48,6 +49,30 @@ router.delete('/:id', async (req, res) => {
   await prisma.todo.delete({
     where: {
       id: req.params.id,
+    },
+  });
+
+  res.json('done');
+});
+
+router.put('/:id/toggle-done', async (req, res) => {
+  const todo = await prisma.todo.findFirst({
+    where: {
+      id: req.params.id,
+    },
+  });
+
+  if (!todo) {
+    res.json('todo not found');
+    return;
+  }
+
+  await prisma.todo.update({
+    where: {
+      id: todo.id,
+    },
+    data: {
+      done: !todo.done,
     },
   });
 

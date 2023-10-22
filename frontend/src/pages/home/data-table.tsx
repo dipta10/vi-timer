@@ -17,7 +17,12 @@ import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import { Key } from 'ts-key-enum';
-import { Tab, TodoEntity, useTabStore } from '@/pages/states/store.ts';
+import {
+  Tab,
+  TodoEntity,
+  useTabStore,
+  useTodoStore,
+} from '@/pages/states/store.ts';
 import axios from 'axios';
 
 interface DataTableProps<TData, TValue> {
@@ -36,6 +41,8 @@ export function DataTable<TValue>({
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab, pushTab } = useTabStore();
+  const { toggleTodo } = useTodoStore();
+  const [toggling, setToggling] = useState(false);
 
   const table = useReactTable({
     data,
@@ -43,12 +50,8 @@ export function DataTable<TValue>({
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
     state: {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       rowSelection: rowSelection,
     },
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     onRowSelectionChange: setRowSelection,
   });
 
@@ -76,14 +79,40 @@ export function DataTable<TValue>({
   });
   useHotkeys(`e, ${Key.Enter}`, () => onOpenDialog(), {
     enabled: currentTab === Tab.TASK_LIST,
-    preventDefault: true
+    preventDefault: true,
   });
+  useHotkeys(
+    `space`,
+    () => {
+      // because of duplicate key activation
+      // https://github.com/JohannesKlauss/react-hotkeys-hook/issues/1013
+      setToggling(true);
+      const found = getSelectedTodo();
+      if (!found) {
+        throw new Error('todo not found for toggling done');
+      }
+      console.log('found', found);
+      toggleTodo(found.id);
+      toggleDoneApi(found);
+      setToggling(false);
+    },
+    {
+      enabled: currentTab === Tab.TASK_LIST,
+      ignoreEventWhen: () => {
+        return toggling;
+      },
+    },
+  );
 
-  const onOpenDialog = () => {
+  const getSelectedTodo = () => {
     const rowModel = table.getSelectedRowModel();
     const row = rowModel.rows[0];
     const id = row.original.id;
-    const found = data.find((d) => d.id === id);
+    return data.find((d) => d.id === id);
+  };
+
+  const onOpenDialog = () => {
+    const found = getSelectedTodo();
     if (found) {
       setSelectedTodo(found);
     }
@@ -91,10 +120,18 @@ export function DataTable<TValue>({
     pushTab(Tab.ADD_TASK);
   };
 
-  const editTodo = (value: Partial<TodoEntity>) => {
-    console.log('value', value);
+  const toggleDoneApi = (value: Partial<TodoEntity>) => {
     axios
-      .put('http://localhost:8000/todo', value)
+      .put(`http://localhost:8000/todo/${value.id}/toggle-done`, {})
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const editTodo = (value: Partial<TodoEntity>) => {
+    axios
+      .put(`http://localhost:8000/todo/${value.id}`, value)
       .then((res) => {
         console.log(res);
       })
