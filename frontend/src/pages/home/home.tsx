@@ -49,9 +49,6 @@ export default function Home() {
 
   return (
     <div className='container mx-auto py-10'>
-      current tab: {currentTab}
-      <br/>
-      tab history: {tabHistory}
       <Button onClick={onAddTaskBtnClick}>Add Task</Button>
       <DataTable columns={columns} data={todos} />
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />

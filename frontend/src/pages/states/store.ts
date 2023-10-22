@@ -7,7 +7,7 @@ export enum Tab {
 }
 
 export type TodoEntity = {
-  id: string;
+  id: number;
   title: string;
   description?: string;
   status: boolean;
@@ -18,7 +18,7 @@ export type TodoEntity = {
 export type TodoState = {
   todos: TodoEntity[];
   setTodos: (todos: TodoEntity[]) => void;
-  toggleTodo: (id: string) => void;
+  toggleTodo: (id: number) => void;
 };
 
 export interface TabState {

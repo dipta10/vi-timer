@@ -155,9 +155,6 @@ export function EditTaskDialog(prop: EditTaskProps) {
         <DialogHeader>
           <DialogTitle>Edit Todo</DialogTitle>
         </DialogHeader>
-        current tab: {currentTab}
-        <br />
-        tab history: {tabHistory}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <FormField

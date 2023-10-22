@@ -3,33 +3,34 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  // url      = env("DATABASE_URL")
+  url      = "file:./dev.db"
 }
 
 model User {
-  id        String    @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
   updateAt  DateTime  @updatedAt
-  username  String    @db.VarChar(255)
+  username  String
   Project   Project[]
 }
 
 model Project {
-  id        String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
-  name      String   @db.VarChar(255)
+  name      String
   user      User     @relation(fields: [userId], references: [id])
-  userId    String   @db.Uuid
+  userId    String
 }
 
 model Todo {
-  id          String   @id @default(dbgenerated("uuid_generate_v1()")) @db.Uuid
+  id          String   @id @default(uuid())
   createdAt   DateTime @default(now())
   updateAt    DateTime @updatedAt
-  title       String   @db.VarChar(255)
-  description String?  @db.VarChar(255)
+  title       String
+  description String?
   done        Boolean  @default(false)
   timeSpent   Int      @default(0)
   isDeleted   Boolean  @default(false)
