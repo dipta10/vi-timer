@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { stopRunningTasks } from '../utils/todo-utils';
 
 const router = Router();
 
@@ -56,15 +57,11 @@ router.delete('/:id', async (req, res) => {
 });
 
 router.post('/:id/toggle-timer', async (req, res) => {
-  // get current running tasks other than the current task
-  // and stop those tasks
   const { id: todoId } = req.params;
-  const runningTodos = await prisma.todo.findMany({
+
+  const todo = await prisma.todo.findFirst({
     where: {
-      running: true,
-      id: {
-        not: todoId,
-      },
+      id: todoId,
     },
     include: {
       TimeTracking: {
@@ -74,62 +71,35 @@ router.post('/:id/toggle-timer', async (req, res) => {
       },
     },
   });
-  if (runningTodos) {
-    // set the end time for running task
-    for (const todo1 of runningTodos) {
-      for (const tracking of todo1.TimeTracking) {
-        console.log('updating tracking', tracking);
-        await prisma.timeTracking.update({
-          where: {
-            // TODO can we make it in clause?
-            id: tracking.id,
-          },
-          data: {
-            endTime: new Date(),
-          },
-        });
-      }
-      console.log('updaing todo', todo1);
-      // stop the current running task
-      await prisma.todo.update({
-        where: {
-          // TODO can we make it in clause?
-          id: todo1.id,
-        },
-        data: {
-          running: false,
-        },
-      });
-    }
-  }
-
-  const todo = await prisma.todo.findFirst({
-    where: {
-      id: todoId,
-    },
-  });
 
   if (!todo) {
     // how to stop this from stopping the server?
     throw new Error('Unable to find todo to toggle running state');
   }
-  const newState = !todo.running;
+
+  await stopRunningTasks(prisma);
+
+  const newRunningState = !todo.running;
+
+  if (!newRunningState) {
+    res.json('done');
+    return;
+  }
+
   await prisma.todo.update({
     where: {
       id: todoId,
     },
     data: {
-      running: newState,
+      running: newRunningState,
     },
   });
 
-  if (newState) {
-    await prisma.timeTracking.create({
-      data: {
-        todoId,
-      },
-    });
-  }
+  await prisma.timeTracking.create({
+    data: {
+      todoId,
+    },
+  });
 
   res.json('done');
 });

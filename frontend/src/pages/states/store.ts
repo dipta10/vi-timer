@@ -20,6 +20,7 @@ export type TodoState = {
   todos: TodoEntity[];
   setTodos: (todos: TodoEntity[]) => void;
   toggleTodo: (id: number) => void;
+  toggleTimer: (id: number) => void;
 };
 
 export interface TabState {
@@ -73,6 +74,23 @@ export const useTodoStore = create<TodoState>()((set) => ({
       return {
         ...state,
         todos: [...state.todos],
+      };
+    });
+  },
+  toggleTimer: (id) => {
+    set((state) => {
+      const todos = state.todos.map((todo) => {
+        if (todo.id === id) {
+          todo.running = !todo.running;
+        } else {
+          todo.running = false;
+        }
+        return todo;
+      });
+
+      return {
+        ...state,
+        todos: [...todos],
       };
     });
   },

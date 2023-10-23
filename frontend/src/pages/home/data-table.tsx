@@ -41,7 +41,7 @@ export function DataTable<TValue>({
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab, pushTab } = useTabStore();
-  const { toggleTodo } = useTodoStore();
+  const { toggleTodo, toggleTimer } = useTodoStore();
   const [toggling, setToggling] = useState(false);
 
   const table = useReactTable({
@@ -112,7 +112,7 @@ export function DataTable<TValue>({
       if (!found) {
         throw new Error('todo not found for toggling done');
       }
-      // toggleTodo(found.id);
+      toggleTimer(found.id);
       toggleTimerApi(found);
       setToggling(false);
     },
