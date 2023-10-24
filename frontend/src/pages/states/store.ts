@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import * as assert from 'assert';
 
 export enum Tab {
   TASK_LIST,
@@ -14,13 +15,21 @@ export type TodoEntity = {
   timeSpent: number;
   done: boolean;
   running: boolean;
+  startTime?: Date;
+};
+
+export type TimeTracking = {
+  startTime: Date;
+  endTime: Date;
 };
 
 export type TodoState = {
   todos: TodoEntity[];
+  runningTodo?: TodoEntity;
   setTodos: (todos: TodoEntity[]) => void;
   toggleTodo: (id: number) => void;
   toggleTimer: (id: number) => void;
+  setRunningTodo: (todo: TodoEntity) => void;
 };
 
 export interface TabState {
@@ -59,9 +68,11 @@ export const useTabStore = create<TabState>()((set) => ({
 
 export const useTodoStore = create<TodoState>()((set) => ({
   todos: [],
+  // runningTodo: undefined,
   setTodos: (todos) =>
-    set(() => {
+    set((state) => {
       return {
+        ...state,
         todos: todos,
       };
     }),
@@ -87,11 +98,25 @@ export const useTodoStore = create<TodoState>()((set) => ({
         }
         return todo;
       });
+      let found: TodoEntity | undefined = todos.find((t) => t.id === id);
+      if (found?.running) {
+        found.startTime = new Date();
+      } else {
+        found = undefined;
+      }
 
       return {
         ...state,
         todos: [...todos],
+        runningTodo: found,
       };
     });
   },
+  setRunningTodo: (todo) =>
+    set((state) => {
+      return {
+        ...state,
+        runningTodo: todo,
+      };
+    }),
 }));

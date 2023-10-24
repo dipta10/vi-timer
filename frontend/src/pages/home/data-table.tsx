@@ -24,6 +24,7 @@ import {
   useTodoStore,
 } from '@/pages/states/store.ts';
 import axios from 'axios';
+import { fetchRunningTodo } from "@/utils/todo.utils.ts";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -41,7 +42,7 @@ export function DataTable<TValue>({
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab, pushTab } = useTabStore();
-  const { toggleTodo, toggleTimer } = useTodoStore();
+  const { toggleTodo, toggleTimer, setRunningTodo } = useTodoStore();
   const [toggling, setToggling] = useState(false);
 
   const table = useReactTable({
@@ -103,7 +104,7 @@ export function DataTable<TValue>({
     },
   );
   useHotkeys(
-    `t`,
+    't',
     () => {
       // because of duplicate key activation
       // https://github.com/JohannesKlauss/react-hotkeys-hook/issues/1013
@@ -114,6 +115,7 @@ export function DataTable<TValue>({
       }
       toggleTimer(found.id);
       toggleTimerApi(found);
+      // setRunningTodo(found);
       setToggling(false);
     },
     {

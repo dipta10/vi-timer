@@ -12,11 +12,13 @@ import {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 import axios from 'axios';
+import { fetchRunningTodo } from '@/utils/todo.utils.ts';
+import { CurrentTodo } from '@/components/CurrentTodo.tsx';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const { setTodos, todos } = useTodoStore();
-  const { currentTab, pushTab, tabHistory } = useTabStore();
+  const { setTodos, setRunningTodo, todos } = useTodoStore();
+  const { currentTab, pushTab } = useTabStore();
   useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick(), {
     enabled: currentTab === Tab.TASK_LIST,
   });
@@ -38,6 +40,10 @@ export default function Home() {
       });
   }, [currentTab]);
 
+  useEffect(() => {
+    fetchRunningTodo(setRunningTodo);
+  }, []);
+
   const addTodo = (value: Partial<TodoEntity>) => {
     axios
       .post('http://localhost:8000/todo', value)
@@ -50,6 +56,7 @@ export default function Home() {
   return (
     <div className='container mx-auto py-10'>
       <Button onClick={onAddTaskBtnClick}>Add Task</Button>
+      <CurrentTodo></CurrentTodo>
       <DataTable columns={columns} data={todos} />
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
     </div>

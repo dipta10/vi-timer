@@ -2,18 +2,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { TodoEntity } from '@/pages/states/store.ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHourglassStart } from '@fortawesome/free-solid-svg-icons';
-
-const secondsToHms = (seconds: number) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = seconds % 60;
-
-  let ret = '';
-  if (hours != 0) ret += ' ' + hours + 'h';
-  if (minutes != 0 || hours != 0) ret += ' ' + minutes + 'm';
-  ret += ' ' + remainingSeconds + 's';
-  return ret;
-};
+import { secondsToHms } from '@/utils/time.utils.ts';
+import { CurrentTodo } from '@/components/CurrentTodo.tsx';
 
 export const columns: ColumnDef<TodoEntity>[] = [
   {
@@ -49,7 +39,7 @@ export const columns: ColumnDef<TodoEntity>[] = [
   {
     accessorKey: 'timeSpent',
     header: () => (
-      <div className='text-right font-bold' style={{ width: '80px' }}>
+      <div className='text-right font-bold' style={{ width: '100px' }}>
         Spent
       </div>
     ),
@@ -57,12 +47,16 @@ export const columns: ColumnDef<TodoEntity>[] = [
       const timeSpent = parseFloat(row.getValue('timeSpent'));
       const value = secondsToHms(timeSpent);
       const done = row.original.done;
+      const running = row.original.running;
       let className = '';
       if (done) {
         className = 'line-through opacity-50';
       }
       return (
-        <div className={`text-right font-medium ${className}`}>{value}</div>
+        <div className={`text-right font-medium ${className}`}>
+          {value}
+          {running && <CurrentTodo />}
+        </div>
       );
     },
   },

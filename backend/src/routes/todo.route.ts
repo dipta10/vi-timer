@@ -16,6 +16,23 @@ router.get('/', async (_, res: Response) => {
   res.json(todos);
 });
 
+router.get('/get-running', async (_, res: Response) => {
+  const todos = await prisma.todo.findFirst({
+    where: {
+      running: true,
+    },
+    include: {
+      TimeTracking: {
+        where: {
+          endTime: null,
+        },
+      },
+    },
+  });
+
+  res.json(todos);
+});
+
 router.post('/', async (req: Request, res: Response) => {
   const entry = await prisma.todo.create({
     data: {
