@@ -13,7 +13,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 import axios from 'axios';
 import { fetchRunningTodo } from '@/utils/todo.utils.ts';
-import { CurrentTodo } from '@/components/CurrentTodo.tsx';
+import { CurrentTodo } from "@/components/CurrentTodo.tsx";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -55,8 +55,10 @@ export default function Home() {
 
   return (
     <div className='container mx-auto py-10'>
-      <Button onClick={onAddTaskBtnClick}>Add Task</Button>
-      <CurrentTodo></CurrentTodo>
+      <div className='flex flex-row gap-2 items-center justify-between mb-2'>
+        <Button onClick={onAddTaskBtnClick}>Add Task</Button>
+        <CurrentTodo></CurrentTodo>
+      </div>
       <DataTable columns={columns} data={todos} />
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
     </div>

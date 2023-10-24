@@ -8,9 +8,14 @@ const prisma = new PrismaClient();
 
 router.get('/', async (_, res: Response) => {
   const todos = await prisma.todo.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
+    orderBy: [
+      {
+        done: 'asc',
+      },
+      {
+        updateAt: 'desc',
+      },
+    ],
   });
 
   res.json(todos);

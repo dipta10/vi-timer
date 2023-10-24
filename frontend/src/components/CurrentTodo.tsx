@@ -1,32 +1,38 @@
-import { useEffect, useState } from 'react';
 import { useTodoStore } from '@/pages/states/store.ts';
-import { secondsToHms } from '@/utils/time.utils.ts';
+import { CurrentTodoTimer } from '@/components/CurrentTodoTimer.tsx';
+import { useEffect, useState } from 'react';
+import { faHourglassStart } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export function CurrentTodo() {
-  const [timerTime, setTimerTime] = useState('');
   const { runningTodo } = useTodoStore();
+  const [todoTitle, setTodoTitle] = useState('');
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      console.log('int 1');
-      if (!runningTodo) return;
-      const startTime = runningTodo.startTime?.getTime();
-      if (!startTime) return;
-      const currentTime = new Date().getTime();
-      const diff = Math.ceil((currentTime - startTime) / 1000);
-      const time = secondsToHms(diff);
-      setTimerTime(time);
-    }, 1000);
-
-    return () => clearInterval(interval);
+    const maxLength = 20;
+    let title = runningTodo?.title.substr(0, maxLength);
+    if (runningTodo && runningTodo.title.length > maxLength) {
+      title += '...';
+    }
+    setTodoTitle(title ? title : '');
   }, [runningTodo]);
 
   return (
-    <div className='text-red-50 text-red-300'>
-      {/*{runningTodo?.title.substr(0, 10)}*/}
-      {/*{' - '}*/}
-      {/*{runningTodo?.startTime?.toLocaleTimeString()}*/}
-      {timerTime}
-    </div>
+    runningTodo && (
+      <div className='border rounded p-3 flex flex-row items-center gap-3'>
+        <FontAwesomeIcon
+          style={{
+            fontSize: 'x-large',
+            color: 'brown',
+          }}
+          className='fa-beat'
+          icon={faHourglassStart}
+        />
+        <div>
+          {todoTitle}
+          <CurrentTodoTimer />
+        </div>
+      </div>
+    )
   );
 }

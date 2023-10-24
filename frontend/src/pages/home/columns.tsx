@@ -3,7 +3,7 @@ import { TodoEntity } from '@/pages/states/store.ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHourglassStart } from '@fortawesome/free-solid-svg-icons';
 import { secondsToHms } from '@/utils/time.utils.ts';
-import { CurrentTodo } from '@/components/CurrentTodo.tsx';
+import { CurrentTodoTimer } from '@/components/CurrentTodoTimer.tsx';
 
 export const columns: ColumnDef<TodoEntity>[] = [
   {
@@ -53,9 +53,11 @@ export const columns: ColumnDef<TodoEntity>[] = [
         className = 'line-through opacity-50';
       }
       return (
-        <div className={`text-right font-medium ${className}`}>
-          {value}
-          {running && <CurrentTodo />}
+        <div className={`text-right font-medium`}>
+          <div className={className}>
+            {value}
+          </div>
+          {running && <CurrentTodoTimer />}
         </div>
       );
     },
