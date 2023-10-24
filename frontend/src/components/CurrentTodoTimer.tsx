@@ -7,19 +7,24 @@ export function CurrentTodoTimer() {
   const { runningTodo } = useTodoStore();
 
   useEffect(() => {
+    setTimerValue();
     const interval = setInterval(() => {
-      console.log('int 1');
-      if (!runningTodo) return;
-      const startTime = runningTodo.startTime?.getTime();
-      if (!startTime) return;
-      const currentTime = new Date().getTime();
-      const diff = Math.ceil((currentTime - startTime) / 1000);
-      const time = secondsToHms(diff);
-      setTimerTime(time);
+      console.log('int');
+      setTimerValue();
     }, 1000);
 
     return () => clearInterval(interval);
   }, [runningTodo]);
+
+  const setTimerValue = () => {
+    if (!runningTodo) return;
+    const startTime = runningTodo.startTime?.getTime();
+    if (!startTime) return;
+    const currentTime = new Date().getTime();
+    const diff = Math.ceil((currentTime - startTime) / 1000);
+    const time = secondsToHms(diff);
+    setTimerTime(time);
+  };
 
   return <div className='text-red-500'>{timerTime}</div>;
 }

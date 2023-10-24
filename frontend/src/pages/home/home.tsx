@@ -13,7 +13,8 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 import axios from 'axios';
 import { fetchRunningTodo } from '@/utils/todo.utils.ts';
-import { CurrentTodo } from "@/components/CurrentTodo.tsx";
+import { CurrentTodo } from '@/components/CurrentTodo.tsx';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -56,7 +57,15 @@ export default function Home() {
   return (
     <div className='container mx-auto py-10'>
       <div className='flex flex-row gap-2 items-center justify-between mb-2'>
-        <Button onClick={onAddTaskBtnClick}>Add Task</Button>
+        <div className='flex flex-row gap-2'>
+          <Button onClick={onAddTaskBtnClick}>Add Task</Button>
+          <Link
+            className='border rounded-md px-4 py-2 bg-white text-slate-900 text-sm'
+            to='/timeline'
+          >
+            Timeline
+          </Link>
+        </div>
         <CurrentTodo></CurrentTodo>
       </div>
       <DataTable columns={columns} data={todos} />
