@@ -161,10 +161,10 @@ router.get('/timeline', async (_, res: Response) => {
   const tracking = await prisma.timeTracking.findMany({
     orderBy: [
       {
-        endTime: 'desc',
+        startTime: 'desc',
       },
       {
-        startTime: 'desc',
+        endTime: 'desc',
       },
     ],
     where: {

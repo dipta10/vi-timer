@@ -21,6 +21,7 @@ export type TimeTracking = {
   id: string;
   startTime: Date;
   endTime: Date;
+  todo: TodoEntity;
 };
 
 export type TodoState = {

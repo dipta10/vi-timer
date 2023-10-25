@@ -14,7 +14,7 @@ import { Key } from 'ts-key-enum';
 import axios from 'axios';
 import { fetchRunningTodo } from '@/utils/todo.utils.ts';
 import { CurrentTodo } from '@/components/CurrentTodo.tsx';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -63,12 +63,12 @@ export default function Home() {
       <div className='flex flex-row gap-2 items-center justify-between mb-2'>
         <div className='flex flex-row gap-2'>
           <Button onClick={onAddTaskBtnClick}>Add Task</Button>
-          <Link
+          <Button
             className='border rounded-md px-4 py-2 bg-white text-slate-900 text-sm'
-            to='/timeline'
+            onClick={() => navigate('/timeline')}
           >
             Timeline
-          </Link>
+          </Button>
         </div>
         <CurrentTodo></CurrentTodo>
       </div>

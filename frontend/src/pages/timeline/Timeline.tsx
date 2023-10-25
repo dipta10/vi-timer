@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { useTodoStore } from '@/pages/states/store.ts';
+import { TrackList } from '@/pages/timeline/track-list.tsx';
+import { trackColumns } from '@/pages/timeline/track-columns.tsx';
 
 function Timeline() {
   const navigate = useNavigate();
@@ -16,7 +18,7 @@ function Timeline() {
       .then(({ data }) => {
         data = data.map((d: any) => {
           d.startTime = new Date(d.startTime);
-          d.endTime = new Date(d.endTime);
+          if (d.endTime) d.endTime = new Date(d.endTime);
           return d;
         });
         console.log('data', data);
@@ -28,7 +30,7 @@ function Timeline() {
   }, []);
 
   return (
-   <>
+    <>
       {timeline.length > 0 && timeline[0].startTime.toLocaleTimeString()}
       <ModeToggle />
       <Link
@@ -37,7 +39,9 @@ function Timeline() {
       >
         Todo List
       </Link>
-      hello from the timeline
+      <br/>
+      All time entries in past 7 days
+      <TrackList columns={trackColumns} data={timeline} />
     </>
   );
 }
