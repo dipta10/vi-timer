@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import * as assert from 'assert';
 
 export enum Tab {
   TASK_LIST,
@@ -19,6 +18,7 @@ export type TodoEntity = {
 };
 
 export type TimeTracking = {
+  id: string;
   startTime: Date;
   endTime: Date;
 };
@@ -29,6 +29,8 @@ export type TodoState = {
   setTodos: (todos: TodoEntity[]) => void;
   toggleTodo: (id: number) => void;
   toggleTimer: (id: number) => void;
+  timeline: TimeTracking[];
+  setTimeline: (tracks: TimeTracking[]) => void;
   setRunningTodo: (todo: TodoEntity) => void;
 };
 
@@ -68,6 +70,7 @@ export const useTabStore = create<TabState>()((set) => ({
 
 export const useTodoStore = create<TodoState>()((set) => ({
   todos: [],
+  timeline: [],
   // runningTodo: undefined,
   setTodos: (todos) =>
     set((state) => {
@@ -117,6 +120,13 @@ export const useTodoStore = create<TodoState>()((set) => ({
       return {
         ...state,
         runningTodo: todo,
+      };
+    }),
+  setTimeline: (tracks) =>
+    set((state) => {
+      return {
+        ...state,
+        timeline: tracks,
       };
     }),
 }));

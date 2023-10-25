@@ -39,7 +39,7 @@ export const columns: ColumnDef<TodoEntity>[] = [
   {
     accessorKey: 'timeSpent',
     header: () => (
-      <div className='text-right font-bold' style={{ width: '100px' }}>
+      <div className='text-right font-bold' style={{ minWidth: '100px' }}>
         Spent
       </div>
     ),
@@ -54,9 +54,7 @@ export const columns: ColumnDef<TodoEntity>[] = [
       }
       return (
         <div className={`text-right font-medium`}>
-          <div className={className}>
-            {value}
-          </div>
+          <div className={className}>{value}</div>
           {running && <CurrentTodoTimer />}
         </div>
       );

@@ -14,13 +14,17 @@ import { Key } from 'ts-key-enum';
 import axios from 'axios';
 import { fetchRunningTodo } from '@/utils/todo.utils.ts';
 import { CurrentTodo } from '@/components/CurrentTodo.tsx';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [open, setOpen] = useState(false);
   const { setTodos, setRunningTodo, todos } = useTodoStore();
   const { currentTab, pushTab } = useTabStore();
+  const navigate = useNavigate();
   useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick(), {
+    enabled: currentTab === Tab.TASK_LIST,
+  });
+  useHotkeys(`c`, () => navigate('/timeline'), {
     enabled: currentTab === Tab.TASK_LIST,
   });
 

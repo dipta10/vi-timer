@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { stopRunningTasks } from '../utils/todo-utils';
 import moment from 'moment';
+import { stopRunningTasks } from '../utils/todo-utils';
 
 const router = Router();
 
@@ -156,10 +156,13 @@ router.put('/:id/toggle-done', async (req, res) => {
 });
 
 router.get('/timeline', async (_, res: Response) => {
-  const earlier = moment().subtract(7, 'days').toDate();
+  const earlier = moment().subtract(7, 'days').startOf('day').toDate();
 
   const tracking = await prisma.timeTracking.findMany({
     orderBy: [
+      {
+        endTime: 'desc',
+      },
       {
         startTime: 'desc',
       },
@@ -168,6 +171,9 @@ router.get('/timeline', async (_, res: Response) => {
       startTime: {
         gte: earlier,
       },
+    },
+    include: {
+      todo: true,
     },
   });
 

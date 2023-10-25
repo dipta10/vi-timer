@@ -24,7 +24,6 @@ import {
   useTodoStore,
 } from '@/pages/states/store.ts';
 import axios from 'axios';
-import { fetchRunningTodo } from "@/utils/todo.utils.ts";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
