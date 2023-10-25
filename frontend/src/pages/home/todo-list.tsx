@@ -30,7 +30,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TValue>({
+export function TodoList<TValue>({
   columns,
   data,
 }: DataTableProps<TodoEntity, TValue>) {
@@ -41,7 +41,7 @@ export function DataTable<TValue>({
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab, pushTab } = useTabStore();
-  const { toggleTodo, toggleTimer, setRunningTodo } = useTodoStore();
+  const { toggleTodo, toggleTimer } = useTodoStore();
   const [toggling, setToggling] = useState(false);
 
   const table = useReactTable({

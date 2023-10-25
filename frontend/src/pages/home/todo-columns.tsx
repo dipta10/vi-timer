@@ -1,11 +1,11 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { TodoEntity } from '@/pages/states/store.ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHourglassStart } from '@fortawesome/free-solid-svg-icons';
+import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { secondsToHms } from '@/utils/time.utils.ts';
 import { CurrentTodoTimer } from '@/components/CurrentTodoTimer.tsx';
 
-export const columns: ColumnDef<TodoEntity>[] = [
+export const todoColumns: ColumnDef<TodoEntity>[] = [
   {
     accessorKey: 'title',
     header: () => <div className='text-left font-bold'>Title</div>,
@@ -28,7 +28,7 @@ export const columns: ColumnDef<TodoEntity>[] = [
                 color: 'brown',
               }}
               className='fa-beat'
-              icon={faHourglassStart}
+              icon={faClock}
             />
           )}
           {title}

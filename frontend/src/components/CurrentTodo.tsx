@@ -1,7 +1,7 @@
 import { useTodoStore } from '@/pages/states/store.ts';
 import { CurrentTodoTimer } from '@/components/CurrentTodoTimer.tsx';
 import { useEffect, useState } from 'react';
-import { faHourglassStart } from '@fortawesome/free-solid-svg-icons';
+import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export function CurrentTodo() {
@@ -20,16 +20,16 @@ export function CurrentTodo() {
   return (
     runningTodo && (
       <div className='border rounded p-3 flex flex-row items-center gap-3'>
-        <FontAwesomeIcon
-          style={{
-            fontSize: 'x-large',
-            color: 'brown',
-          }}
-          className='fa-beat'
-          icon={faHourglassStart}
-        />
-        <div>
+        <div className='flex flex-row items-end gap-3'>
           {todoTitle}
+          <FontAwesomeIcon
+            style={{
+              fontSize: 'x-large',
+              color: 'brown',
+            }}
+            className=''
+            icon={faClock}
+          />
           <CurrentTodoTimer />
         </div>
       </div>

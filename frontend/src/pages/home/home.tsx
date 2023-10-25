@@ -1,5 +1,5 @@
-import { columns } from './columns';
-import { DataTable } from './data-table';
+import { todoColumns } from './todo-columns.tsx';
+import { TodoList } from './todo-list.tsx';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button.tsx';
@@ -72,7 +72,7 @@ export default function Home() {
         </div>
         <CurrentTodo></CurrentTodo>
       </div>
-      <DataTable columns={columns} data={todos} />
+      <TodoList columns={todoColumns} data={todos} />
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
     </div>
   );
