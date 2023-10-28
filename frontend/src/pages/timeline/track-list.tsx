@@ -30,10 +30,10 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function TrackList<TValue>({
+export function TrackList<TData, TValue>({
   columns,
   data,
-}: DataTableProps<TimeTracking, TValue>) {
+}: DataTableProps<TData, TValue>) {
   // https://tanstack.com/table/v8/docs/examples/react/row-selection
   const [rowSelection, setRowSelection] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -41,8 +41,6 @@ export function TrackList<TValue>({
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab, pushTab } = useTabStore();
-  const { toggleTodo, toggleTimer } = useTodoStore();
-  const [toggling, setToggling] = useState(false);
 
   const table = useReactTable({
     data,
@@ -77,87 +75,6 @@ export function TrackList<TValue>({
   useHotkeys('up, k', () => onPressUp(), {
     enabled: currentTab === Tab.TASK_LIST,
   });
-  useHotkeys(`e, ${Key.Enter}`, () => onOpenDialog(), {
-    enabled: currentTab === Tab.TASK_LIST,
-    preventDefault: true,
-  });
-  useHotkeys(
-    `space`,
-    () => {
-      // because of duplicate key activation
-      // https://github.com/JohannesKlauss/react-hotkeys-hook/issues/1013
-      setToggling(true);
-      const found = getSelectedTodo();
-      if (!found) {
-        throw new Error('todo not found for toggling done');
-      }
-      // toggleTodo(found.id);
-      // toggleDoneApi(found);
-      setToggling(false);
-    },
-    {
-      enabled: currentTab === Tab.TASK_LIST,
-      ignoreEventWhen: () => {
-        return toggling;
-      },
-    },
-  );
-  useHotkeys(
-    't',
-    () => {
-      // because of duplicate key activation
-      // https://github.com/JohannesKlauss/react-hotkeys-hook/issues/1013
-      setToggling(true);
-      const found = getSelectedTodo();
-      if (!found) {
-        throw new Error('todo not found for toggling done');
-      }
-      // toggleTimer(found.id);
-      // toggleTimerApi(found);
-      // setRunningTodo(found);
-      setToggling(false);
-    },
-    {
-      enabled: currentTab === Tab.TASK_LIST,
-      ignoreEventWhen: () => {
-        return toggling;
-      },
-    },
-  );
-
-  const getSelectedTodo = () => {
-    const rowModel = table.getSelectedRowModel();
-    const row = rowModel.rows[0];
-    const id = row.original.id;
-    return data.find((d) => d.id === id);
-  };
-
-  const onOpenDialog = () => {
-    const found = getSelectedTodo();
-    if (found) {
-      // setSelectedTodo(found);
-    }
-    setDialogOpen(true);
-    pushTab(Tab.ADD_TASK);
-  };
-
-  const toggleDoneApi = (value: Partial<TodoEntity>) => {
-    axios
-      .put(`http://localhost:8000/todo/${value.id}/toggle-done`, {})
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const toggleTimerApi = (value: Partial<TodoEntity>) => {
-    axios
-      .post(`http://localhost:8000/todo/${value.id}/toggle-timer`, {})
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
-  };
 
   const editTodo = (value: Partial<TodoEntity>) => {
     axios
@@ -208,14 +125,8 @@ export function TrackList<TValue>({
                   ref={(el) =>
                     row.getIsSelected() ? setSelectedRowRef(el) : null
                   }
-                  onClick={() => {
-                    setRowSelection({});
-                    row.toggleSelected();
-                    onOpenDialog();
-                  }}
                 >
                   {row.getVisibleCells().map((cell) => {
-                    // console.log(`${row.getValue('title')} - ${row.getIsSelected()}`);
                     return (
                       <TableCell key={cell.id}>
                         {flexRender(
@@ -235,9 +146,6 @@ export function TrackList<TValue>({
               </TableCell>
             </TableRow>
           )}
-          <TableFooter>
-            All time entries in past 7 days
-          </TableFooter>
         </TableBody>
       </Table>
       <EditTaskDialog
