@@ -57,18 +57,16 @@ function processTracksResponse(
     dates[day][todo.id].push(t);
   }
 
-  console.log('starting scanning dates');
   const timelineRows: TimelineRow[] = [];
   for (const dateStr of Object.keys(dates).sort().reverse()) {
     const dayRow: TimelineRow = {
-      title: moment(dateStr, keyDateFormat).format('D MMM, Y'),
+      title: moment(dateStr, keyDateFormat).format('Do MMM, Y'),
       totalTimeSpent: 0,
       type: 'day',
     };
     timelineRows.push(dayRow);
 
     for (const todoId of Object.keys(dates[dateStr])) {
-      // console.log('todo id', todoId);
       const tracks = dates[dateStr][todoId];
       const todoRow: TimelineRow = {
         title: tracks[0].todo.title,
@@ -93,11 +91,8 @@ function processTracksResponse(
       );
     }
     dayRow.totalTimeSpent = Math.ceil(dayRow.totalTimeSpent);
-    console.log('date is', dayRow);
   }
 
-  console.log('dates', dates);
-  console.log('timeline rows', timelineRows);
   setTimelineRows(timelineRows);
 
   return data;

@@ -117,11 +117,15 @@ export function TrackList<TData, TValue>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
+              console.log('row is', row.original);
+              const type = (row.original as any).type;
+              let className = type === 'day' ? 'font-bold bg-slate-900' : '';
+              if (row.getIsSelected()) className += ' active-input';
               return (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={row.getIsSelected() ? 'active-input' : ''}
+                  className={`${className}`}
                   ref={(el) =>
                     row.getIsSelected() ? setSelectedRowRef(el) : null
                   }

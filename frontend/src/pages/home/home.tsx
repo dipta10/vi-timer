@@ -60,7 +60,7 @@ export default function Home() {
   return (
     <div className='container mx-auto py-10'>
       <Navbar />
-      Todo List
+      {/*Todo List*/}
       <TodoList columns={todoColumns} data={todos} />
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
     </div>

@@ -11,11 +11,11 @@ export const trackColumnsByDay: ColumnDef<TimelineRow>[] = [
       const type = row.original.type;
       let style = '';
       if (type === 'day') {
-        style = 'font-bold';
+        style = 'text-right';
       }
       return (
         <div
-          className={`text-left flex flex-row gap-2 content-center items-center ${style}`}
+          className={`text-left ${style}`}
         >
           {title}
         </div>
@@ -32,11 +32,10 @@ export const trackColumnsByDay: ColumnDef<TimelineRow>[] = [
     cell: ({ row }) => {
       const spent = secondsToHms(row.original.totalTimeSpent);
       const type = row.original.type;
-      let style = '';
       if (type === 'day') {
-        style = 'font-bold';
+        return <div className={`text-left`}>{spent}</div>;
       }
-      return <div className={`text-right ${style}`}>{spent}</div>;
+      return <div className={`text-right`}>{spent}</div>;
     },
   },
 ];
