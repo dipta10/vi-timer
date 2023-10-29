@@ -34,7 +34,7 @@ export default function Home() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:8000/todo')
+      .get(`${import.meta.env.VITE_BACKEND_URL}/todo`)
       .then(({ data }) => {
         console.log(data);
         setTodos(data);
@@ -50,7 +50,7 @@ export default function Home() {
 
   const addTodo = (value: Partial<TodoEntity>) => {
     axios
-      .post('http://localhost:8000/todo', value)
+      .post(`${import.meta.env.VITE_BACKEND_URL}/todo`, value)
       .then((res) => {
         console.log(res);
       })

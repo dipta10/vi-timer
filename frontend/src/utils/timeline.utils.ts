@@ -8,7 +8,7 @@ export function fetchTimeline(
   setTimelineRows: (tracks: TimelineRow[]) => void,
 ) {
   axios
-    .get('http://localhost:8000/todo/timeline')
+    .get(`${import.meta.env.VITE_BACKEND_URL}/todo/timeline`)
     .then(({ data }) => {
       data = sanitizeTracksResponse(data);
       processTracksResponse(data, setTimelineRows);

@@ -3,7 +3,7 @@ import { TimeTracking, TodoEntity } from '@/pages/states/store.ts';
 
 export const fetchRunningTodo = (storeTodo: (todo: TodoEntity) => void) => {
   axios
-    .get('http://localhost:8000/todo/get-running')
+    .get(`${import.meta.env.VITE_BACKEND_URL}/todo/get-running`)
     .then(({ data: todo }) => {
       if (!todo) return;
       const tracking = (todo as any).TimeTracking[0] as TimeTracking;

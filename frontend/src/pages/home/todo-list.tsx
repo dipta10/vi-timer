@@ -143,7 +143,7 @@ export function TodoList<TValue>({
 
   const toggleDoneApi = (value: Partial<TodoEntity>) => {
     axios
-      .put(`http://localhost:8000/todo/${value.id}/toggle-done`, {})
+      .put(`${import.meta.env.VITE_BACKEND_URL}/todo/${value.id}/toggle-done`, {})
       .then((res) => {
         console.log(res);
       })
@@ -152,7 +152,7 @@ export function TodoList<TValue>({
 
   const toggleTimerApi = (value: Partial<TodoEntity>) => {
     axios
-      .post(`http://localhost:8000/todo/${value.id}/toggle-timer`, {})
+      .post(`${import.meta.env.VITE_BACKEND_URL}/todo/${value.id}/toggle-timer`, {})
       .then((res) => {
         console.log(res);
       })
@@ -161,7 +161,7 @@ export function TodoList<TValue>({
 
   const editTodo = (value: Partial<TodoEntity>) => {
     axios
-      .put(`http://localhost:8000/todo/${value.id}`, value)
+      .put(`${import.meta.env.VITE_BACKEND_URL}/todo/${value.id}`, value)
       .then((res) => {
         console.log(res);
       })
