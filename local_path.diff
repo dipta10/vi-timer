@@ -1,0 +1,51 @@
+[1mdiff --git a/backend/.env b/backend/.env[m
+[1mindex 1e3015d..0728633 100644[m
+[1m--- a/backend/.env[m
+[1m+++ b/backend/.env[m
+[36m@@ -1,4 +1,4 @@[m
+[31m-PORT=8000[m
+[32m+[m[32mPORT=5011[m
+ [m
+ # This was inserted by `prisma init`:[m
+ # Environment variables declared in this file are automatically made available to Prisma.[m
+[36m@@ -7,4 +7,4 @@[m [mPORT=8000[m
+ # Prisma supports the native connection string format for PostgreSQL, MySQL, SQLite, SQL Server, MongoDB and CockroachDB.[m
+ # See the documentation for all the connection string options: https://pris.ly/d/connection-strings[m
+ [m
+[31m-DATABASE_URL="postgresql://postgres:root@localhost:5432/todo_app?schema=public"[m
+\ No newline at end of file[m
+[32m+[m[32mDATABASE_URL="postgresql://postgres:root@localhost:5432/todo_app?schema=public"[m
+[1mdiff --git a/backend/prisma/schema.prisma b/backend/prisma/schema.prisma[m
+[1mindex efe454e..29ff54b 100644[m
+[1m--- a/backend/prisma/schema.prisma[m
+[1m+++ b/backend/prisma/schema.prisma[m
+[36m@@ -5,7 +5,7 @@[m [mgenerator client {[m
+ datasource db {[m
+   provider = "sqlite"[m
+   // url      = env("DATABASE_URL")[m
+[31m-  url      = "file:./dev.db"[m
+[32m+[m[32m  url      = "file:/home/dipta10/Dropbox/Apps/vi-timer/local.db"[m
+ }[m
+ [m
+ model User {[m
+[1mdiff --git a/frontend/.env b/frontend/.env[m
+[1mindex 52596f9..754093a 100644[m
+[1m--- a/frontend/.env[m
+[1m+++ b/frontend/.env[m
+[36m@@ -1 +1 @@[m
+[31m-VITE_BACKEND_URL=http://localhost:8000[m
+\ No newline at end of file[m
+[32m+[m[32mVITE_BACKEND_URL=http://localhost:5011[m
+[1mdiff --git a/frontend/vite.config.ts b/frontend/vite.config.ts[m
+[1mindex 77d664d..ec7ee44 100644[m
+[1m--- a/frontend/vite.config.ts[m
+[1m+++ b/frontend/vite.config.ts[m
+[36m@@ -12,7 +12,7 @@[m [mexport default defineConfig({[m
+     }),[m
+   ],[m
+   server: {[m
+[31m-    port: 3000,[m
+[32m+[m[32m    port: 5010,[m
+   },[m
+   resolve: {[m
+     alias: {[m
