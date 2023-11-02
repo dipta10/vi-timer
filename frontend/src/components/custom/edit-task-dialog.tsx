@@ -183,6 +183,11 @@ export function EditTaskDialog(prop: EditTaskProps) {
               control={form.control}
               name='description'
               render={({ field }) => {
+                let className = ' transition-all duration-200 ease-out ';
+                if (activeInput === 1) className += ' active-input';
+                if (activeInput === 1 && insertMode) {
+                  className += ' min-h-[500px]';
+                }
                 return (
                   <FormItem>
                     <FormLabel>Description</FormLabel>
@@ -191,7 +196,7 @@ export function EditTaskDialog(prop: EditTaskProps) {
                         {...field}
                         disabled={true}
                         ref={(el) => (inputRefs.current[1] = el as any)}
-                        className={activeInput === 1 ? 'active-input' : ''}
+                        className={className}
                       />
                     </FormControl>
                     <FormMessage />
