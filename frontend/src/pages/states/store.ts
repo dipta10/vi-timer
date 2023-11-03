@@ -8,7 +8,11 @@ export enum Tab {
   ADD_TASK,
 }
 
-export type TodoEntity = {
+export interface WithId {
+  id: number;
+}
+
+export interface TodoEntity {
   id: number;
   title: string;
   description?: string;

@@ -14,6 +14,7 @@ import axios from 'axios';
 import { fetchRunningTodo } from '@/utils/todo.utils.ts';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar.tsx';
+import { ViTable } from '@/components/custom/vi-table.tsx';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -61,7 +62,11 @@ export default function Home() {
     <div className='container mx-auto py-10'>
       <Navbar />
       {/*Todo List*/}
-      <TodoList columns={todoColumns} data={todos} />
+      <ViTable columns={todoColumns} data={todos} tabName={Tab.TASK_LIST} />
+      <br/>
+      <br/>
+      <br/>
+      {/*<TodoList columns={todoColumns} data={todos} />*/}
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
     </div>
   );
