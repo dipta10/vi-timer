@@ -3,6 +3,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  Table as ReactTable,
 } from '@tanstack/react-table';
 import { Tab, TodoEntity, useTabStore, WithId } from '@/pages/states/store.ts';
 import { useEffect, useState } from 'react';
@@ -21,6 +22,7 @@ interface ViTableProp<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   tabName: Tab;
+  reactTable: ReactTable<TData>;
   onSelectRow: (data: TData) => void;
 }
 
@@ -29,28 +31,20 @@ export function ViTable<TData extends WithId, TValue>({
   data,
   tabName,
   onSelectRow,
+  reactTable: table,
 }: ViTableProp<TData, TValue>) {
   // https://tanstack.com/table/v8/docs/examples/react/row-selection
   const [rowSelection, setRowSelection] = useState({});
-  const [selectedTodo, setSelectedTodo] = useState<TData | undefined>(undefined);
+  const [selectedTodo, setSelectedTodo] = useState<TData | undefined>(
+    undefined,
+  );
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab } = useTabStore();
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    enableRowSelection: true,
-    state: {
-      rowSelection: rowSelection,
-    },
-    onRowSelectionChange: setRowSelection,
-  });
-
   useEffect(() => {
     if (data.length != 0) {
-      setRowSelection({ 0: true });
+      table.setRowSelection({ 0: true });
     }
   }, [data.length]);
 
@@ -63,13 +57,16 @@ export function ViTable<TData extends WithId, TValue>({
   }, [selectedRowRef]);
 
   const onPressDown = () => {
-    const selected = parseInt(Object.keys(rowSelection)[0]);
-    setRowSelection({ [(selected + 1) % data.length]: true });
+    // const selected = parseInt(Object.keys(rowSelection)[0]);
+    // const selected = table.getSelectedRowModel().rows[0];
+    const selected = table.getSelectedRowModel().flatRows[0].index;
+    // setRowSelection({ [(selected + 1) % data.length]: true });
+    table.setRowSelection({ [(selected + 1) % data.length]: true });
   };
 
   const onPressUp = () => {
-    const selected = parseInt(Object.keys(rowSelection)[0]);
-    setRowSelection({ [(selected - 1 + data.length) % data.length]: true });
+    const selected = table.getSelectedRowModel().flatRows[0].index;
+    table.setRowSelection({ [(selected - 1 + data.length) % data.length]: true });
   };
 
   useHotkeys(`${Key.ArrowDown}, j`, () => onPressDown(), {
@@ -128,10 +125,6 @@ export function ViTable<TData extends WithId, TValue>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
-              if (row.getIsSelected()) {
-                // console.log('selected row', row.original);
-                // setSelectedTodo(row.original);
-              }
               return (
                 <TableRow
                   key={row.id}
@@ -141,7 +134,7 @@ export function ViTable<TData extends WithId, TValue>({
                     row.getIsSelected() ? setSelectedRowRef(el) : null
                   }
                   onClick={() => {
-                    setRowSelection({});
+                    table.setRowSelection({});
                     row.toggleSelected();
                     selectRow();
                   }}
