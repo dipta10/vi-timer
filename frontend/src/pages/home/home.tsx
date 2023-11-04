@@ -15,6 +15,7 @@ import { fetchRunningTodo } from '@/utils/todo.utils.ts';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar.tsx';
 import { ViTable } from '@/components/custom/vi-table.tsx';
+import { TodoListAlt } from '@/pages/todo-list/TodoListAlt.tsx';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -34,18 +35,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/todo`)
-      .then(({ data }) => {
-        console.log(data);
-        setTodos(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [currentTab]);
-
-  useEffect(() => {
+    console.log('fetching running todo');
     fetchRunningTodo(setRunningTodo);
   }, []);
 
@@ -61,11 +51,11 @@ export default function Home() {
   return (
     <div className='container mx-auto py-10'>
       <Navbar />
+      <TodoListAlt />
       {/*Todo List*/}
-      <ViTable columns={todoColumns} data={todos} tabName={Tab.TASK_LIST} />
-      <br/>
-      <br/>
-      <br/>
+      <br />
+      <br />
+      <br />
       {/*<TodoList columns={todoColumns} data={todos} />*/}
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
     </div>

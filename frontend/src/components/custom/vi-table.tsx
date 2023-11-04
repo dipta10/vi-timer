@@ -21,16 +21,18 @@ interface ViTableProp<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   tabName: Tab;
+  onSelectRow: (data: TData) => void;
 }
 
 export function ViTable<TData extends WithId, TValue>({
   columns,
   data,
   tabName,
+  onSelectRow,
 }: ViTableProp<TData, TValue>) {
   // https://tanstack.com/table/v8/docs/examples/react/row-selection
   const [rowSelection, setRowSelection] = useState({});
-  const [selectedTodo, setSelectedTodo] = useState<TodoEntity | null>(null);
+  const [selectedTodo, setSelectedTodo] = useState<TData | undefined>(undefined);
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab } = useTabStore();
@@ -79,13 +81,21 @@ export function ViTable<TData extends WithId, TValue>({
   useHotkeys(
     `e, ${Key.Enter}`,
     () => {
-      console.log(getSelectedTodo());
+      selectRow();
     },
     {
       enabled: currentTab === tabName,
       preventDefault: true,
     },
   );
+
+  function selectRow() {
+    const selectedData = getSelectedTodo();
+    if (!selectedData) {
+      throw new Error('selected data can not be found!');
+    }
+    onSelectRow(selectedData);
+  }
 
   const getSelectedTodo = () => {
     const rowModel = table.getSelectedRowModel();
@@ -118,6 +128,10 @@ export function ViTable<TData extends WithId, TValue>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
+              if (row.getIsSelected()) {
+                // console.log('selected row', row.original);
+                // setSelectedTodo(row.original);
+              }
               return (
                 <TableRow
                   key={row.id}
@@ -129,7 +143,7 @@ export function ViTable<TData extends WithId, TValue>({
                   onClick={() => {
                     setRowSelection({});
                     row.toggleSelected();
-                    onOpenDialog();
+                    selectRow();
                   }}
                 >
                   {row.getVisibleCells().map((cell) => {
