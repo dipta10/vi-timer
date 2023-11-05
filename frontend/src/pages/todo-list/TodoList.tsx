@@ -6,23 +6,18 @@ import {
   useTabStore,
   useTodoStore,
 } from '@/pages/states/store.ts';
-import { useNavigate } from 'react-router-dom';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { Key } from 'ts-key-enum';
 import axios from 'axios';
-import { fetchRunningTodo } from '@/utils/todo.utils.ts';
 import { todoColumns } from '@/pages/home/todo-columns.tsx';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import { getCoreRowModel, Table, useReactTable } from '@tanstack/react-table';
-import { data } from 'autoprefixer';
 
-export function TodoListAlt() {
+export function TodoList() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { setTodos, toggleTimer, todos } = useTodoStore();
+  const { setTodos, toggleTimer, toggleTodo, todos } = useTodoStore();
   const [selectedTodo, setSelectedTodo] = useState<TodoEntity | null>(null);
   const { currentTab, pushTab } = useTabStore();
   const [toggling, setToggling] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -53,12 +48,8 @@ export function TodoListAlt() {
   useHotkeys(
     't',
     () => {
-      const selectedTodo = getSelectedTodo();
-      console.log('selected todo', selectedTodo);
       // because of duplicate key activation
       // https://github.com/JohannesKlauss/react-hotkeys-hook/issues/1013
-      // TODO here let's move the table varilable in this object
-      // and then pass the table varilable from this components?
       setToggling(true);
       const found = getSelectedTodo();
       if (!found) {
@@ -76,6 +67,39 @@ export function TodoListAlt() {
       },
     },
   );
+  useHotkeys(
+    `space`,
+    () => {
+      // because of duplicate key activation
+      // https://github.com/JohannesKlauss/react-hotkeys-hook/issues/1013
+      setToggling(true);
+      const found = getSelectedTodo();
+      if (!found) {
+        throw new Error('todo not found for toggling done');
+      }
+      toggleTodo(found.id);
+      toggleDoneApi(found);
+      setToggling(false);
+    },
+    {
+      enabled: currentTab === Tab.TASK_LIST,
+      ignoreEventWhen: () => {
+        return toggling;
+      },
+    },
+  );
+
+  const toggleDoneApi = (value: Partial<TodoEntity>) => {
+    axios
+      .put(
+        `${import.meta.env.VITE_BACKEND_URL}/todo/${value.id}/toggle-done`,
+        {},
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
+  };
 
   const toggleTimerApi = (value: Partial<TodoEntity>) => {
     axios
@@ -121,8 +145,6 @@ export function TodoListAlt() {
     <>
       <ViTable
         onSelectRow={onSelectTodo}
-        columns={todoColumns}
-        data={todos}
         tabName={Tab.TASK_LIST}
         reactTable={table}
       />

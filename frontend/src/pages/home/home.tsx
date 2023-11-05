@@ -1,5 +1,3 @@
-import { todoColumns } from './todo-columns.tsx';
-import { TodoList } from './todo-list.tsx';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import React, { useEffect, useState } from 'react';
 import {
@@ -14,12 +12,11 @@ import axios from 'axios';
 import { fetchRunningTodo } from '@/utils/todo.utils.ts';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar.tsx';
-import { ViTable } from '@/components/custom/vi-table.tsx';
-import { TodoListAlt } from '@/pages/todo-list/TodoListAlt.tsx';
+import { TodoList } from '@/pages/todo-list/TodoList.tsx';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const { setTodos, setRunningTodo, todos } = useTodoStore();
+  const { setRunningTodo } = useTodoStore();
   const { currentTab, pushTab } = useTabStore();
   const navigate = useNavigate();
   useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick(), {
@@ -51,12 +48,10 @@ export default function Home() {
   return (
     <div className='container mx-auto py-10'>
       <Navbar />
-      <TodoListAlt />
-      {/*Todo List*/}
+      <TodoList />
       <br />
       <br />
       <br />
-      {/*<TodoList columns={todoColumns} data={todos} />*/}
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
     </div>
   );

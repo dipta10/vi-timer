@@ -1,11 +1,5 @@
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-  Table as ReactTable,
-} from '@tanstack/react-table';
-import { Tab, TodoEntity, useTabStore, WithId } from '@/pages/states/store.ts';
+import { flexRender, Table as ReactTable } from '@tanstack/react-table';
+import { Tab, useTabStore, WithId } from '@/pages/states/store.ts';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
@@ -18,35 +12,28 @@ import {
   TableRow,
 } from '@/components/ui/table.tsx';
 
-interface ViTableProp<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface ViTableProp<TData extends WithId> {
   tabName: Tab;
   reactTable: ReactTable<TData>;
   onSelectRow: (data: TData) => void;
 }
 
-export function ViTable<TData extends WithId, TValue>({
-  columns,
-  data,
+export function ViTable<TData extends WithId>({
   tabName,
   onSelectRow,
   reactTable: table,
-}: ViTableProp<TData, TValue>) {
+}: ViTableProp<TData>) {
   // https://tanstack.com/table/v8/docs/examples/react/row-selection
-  const [rowSelection, setRowSelection] = useState({});
-  const [selectedTodo, setSelectedTodo] = useState<TData | undefined>(
-    undefined,
-  );
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab } = useTabStore();
 
   useEffect(() => {
-    if (data.length != 0) {
+    const dataLength = table.getRowModel().rows.length;
+    if (dataLength != 0) {
       table.setRowSelection({ 0: true });
     }
-  }, [data.length]);
+  }, []);
 
   // useEffect to scroll to the selected tr element when the component mounts
   useEffect(() => {
@@ -57,16 +44,17 @@ export function ViTable<TData extends WithId, TValue>({
   }, [selectedRowRef]);
 
   const onPressDown = () => {
-    // const selected = parseInt(Object.keys(rowSelection)[0]);
-    // const selected = table.getSelectedRowModel().rows[0];
     const selected = table.getSelectedRowModel().flatRows[0].index;
-    // setRowSelection({ [(selected + 1) % data.length]: true });
-    table.setRowSelection({ [(selected + 1) % data.length]: true });
+    const dataLength = table.getRowModel().rows.length;
+    table.setRowSelection({ [(selected + 1) % dataLength]: true });
   };
 
   const onPressUp = () => {
     const selected = table.getSelectedRowModel().flatRows[0].index;
-    table.setRowSelection({ [(selected - 1 + data.length) % data.length]: true });
+    const dataLength = table.getRowModel().rows.length;
+    table.setRowSelection({
+      [(selected - 1 + dataLength) % dataLength]: true,
+    });
   };
 
   useHotkeys(`${Key.ArrowDown}, j`, () => onPressDown(), {
@@ -76,7 +64,7 @@ export function ViTable<TData extends WithId, TValue>({
     enabled: currentTab === tabName,
   });
   useHotkeys(
-    `e, ${Key.Enter}`,
+    `${Key.Enter}`,
     () => {
       selectRow();
     },
@@ -96,9 +84,7 @@ export function ViTable<TData extends WithId, TValue>({
 
   const getSelectedTodo = () => {
     const rowModel = table.getSelectedRowModel();
-    const row = rowModel.rows[0];
-    const id = row.original.id;
-    return data.find((d) => d.id === id);
+    return rowModel.rows[0].original;
   };
 
   return (
@@ -140,7 +126,6 @@ export function ViTable<TData extends WithId, TValue>({
                   }}
                 >
                   {row.getVisibleCells().map((cell) => {
-                    // console.log(`${row.getValue('title')} - ${row.getIsSelected()}`);
                     return (
                       <TableCell key={cell.id}>
                         {flexRender(
@@ -155,7 +140,10 @@ export function ViTable<TData extends WithId, TValue>({
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className='h-24 text-center'>
+              <TableCell
+                colSpan={table.getAllColumns().length}
+                className='h-24 text-center'
+              >
                 No Todos Yet!
               </TableCell>
             </TableRow>
