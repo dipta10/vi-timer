@@ -17,7 +17,7 @@ import { TodoList } from '@/pages/todo-list/TodoList.tsx';
 export default function Home() {
   const [open, setOpen] = useState(false);
   const { setRunningTodo } = useTodoStore();
-  const { currentTab, pushTab } = useTabStore();
+  const { currentTab, pushTab, setTab } = useTabStore();
   const navigate = useNavigate();
   useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick(), {
     enabled: currentTab === Tab.TASK_LIST,
@@ -32,6 +32,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    setTab(Tab.TASK_LIST);
     console.log('fetching running todo');
     fetchRunningTodo(setRunningTodo);
   }, []);

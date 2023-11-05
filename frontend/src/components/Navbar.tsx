@@ -35,6 +35,7 @@ export function Navbar() {
         <CurrentTodo></CurrentTodo>
         <ModeToggle />
       </div>
+      tabhistory: {tabHistory.join(', ')}
     </div>
   );
 }

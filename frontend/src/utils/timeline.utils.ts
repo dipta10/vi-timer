@@ -12,7 +12,6 @@ export function fetchTimeline(
     .then(({ data }) => {
       data = sanitizeTracksResponse(data);
       processTracksResponse(data, setTimelineRows);
-      console.log('data', data);
       data.push({
         title: 'dummmy',
         startTime: new Date(),

@@ -13,20 +13,14 @@ export const trackColumnsByDay: ColumnDef<TimelineRow>[] = [
       if (type === 'day') {
         style = 'text-right';
       }
-      return (
-        <div
-          className={`text-left ${style}`}
-        >
-          {title}
-        </div>
-      );
+      return <div className={`text-left ${style}`}>{title}</div>;
     },
   },
   {
-    accessorKey: 'startTime',
+    accessorKey: 'spent',
     header: () => (
       <div className='text-right font-bold' style={{ minWidth: '100px' }}>
-        Spent
+        Time Spent
       </div>
     ),
     cell: ({ row }) => {

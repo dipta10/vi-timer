@@ -3,9 +3,10 @@ import { devtools } from 'zustand/middleware';
 import { TimelineRow } from '@/components/types/timeline.ts';
 
 export enum Tab {
-  TASK_LIST,
-  EDIT_TASK,
-  ADD_TASK,
+  TASK_LIST = 'TASK_LIST',
+  EDIT_TASK = 'EDIT_TASK',
+  ADD_TASK = 'ADD_TASK',
+  TIMELINE = 'TIMELINE',
 }
 
 export interface WithId {
@@ -21,7 +22,7 @@ export interface TodoEntity {
   done: boolean;
   running: boolean;
   startTime?: Date;
-};
+}
 
 export type TimeTracking = {
   id: string;
@@ -58,6 +59,7 @@ export const useTabStore = create<TabState>()((set) => ({
     set(() => {
       return {
         currentTab: tab,
+        tabHistory: [tab],
       };
     }),
   pushTab: (tab) =>
