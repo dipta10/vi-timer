@@ -14,7 +14,7 @@ router.get('/', async (_, res: Response) => {
         done: 'asc',
       },
       {
-        updateAt: 'desc',
+        updatedAt: 'desc',
       },
     ],
   });

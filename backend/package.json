@@ -21,7 +21,9 @@
     "ts-config": "tsc --showConfig",
     "db:migrate": "npx prisma migrate dev --name",
     "db:generate-migration": "npx prisma migrate dev --create-only --name",
-    "db:push": "prisma db push"
+    "db:push": "prisma db push",
+    "db:deploy": "prisma migrate deploy",
+    "db:reset": "npx prisma migrate reset"
   },
   "devDependencies": {
     "@babel/core": "^7.22.5",

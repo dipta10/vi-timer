@@ -11,7 +11,7 @@ datasource db {
 model User {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
-  updateAt  DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt
   username  String
   Project   Project[]
 }
@@ -19,7 +19,7 @@ model User {
 model Project {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
-  updateAt  DateTime @updatedAt
+  updatedAt DateTime @updatedAt
   name      String
   user      User     @relation(fields: [userId], references: [id])
   userId    String
@@ -28,7 +28,7 @@ model Project {
 model Todo {
   id           String         @id @default(uuid())
   createdAt    DateTime       @default(now())
-  updateAt     DateTime       @updatedAt
+  updatedAt    DateTime       @updatedAt
   title        String
   description  String?
   done         Boolean        @default(false)
@@ -41,7 +41,7 @@ model Todo {
 model TimeTracking {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
-  updateAt  DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt
   todo      Todo      @relation(fields: [todoId], references: [id])
   todoId    String
   startTime DateTime  @default(now())
