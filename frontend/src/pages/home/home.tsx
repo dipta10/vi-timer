@@ -9,14 +9,14 @@ import {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 import axios from 'axios';
-import { fetchRunningTodo } from '@/utils/todo.utils.ts';
+import { fetchRunningTodo, fetchTodos } from '@/utils/todo.utils.ts';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar.tsx';
 import { TodoList } from '@/pages/todo-list/TodoList.tsx';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const { setRunningTodo } = useTodoStore();
+  const { setRunningTodo, setTodos } = useTodoStore();
   const { currentTab, pushTab, setTab } = useTabStore();
   const navigate = useNavigate();
   useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick(), {
@@ -42,6 +42,7 @@ export default function Home() {
       .post(`${import.meta.env.VITE_BACKEND_URL}/todo`, value)
       .then((res) => {
         console.log(res);
+        fetchTodos(setTodos);
       })
       .catch((err) => console.log(err));
   };
@@ -50,9 +51,6 @@ export default function Home() {
     <div className='container mx-auto py-10'>
       <Navbar />
       <TodoList />
-      <br />
-      <br />
-      <br />
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
     </div>
   );

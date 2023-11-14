@@ -11,31 +11,35 @@ import axios from 'axios';
 import { todoColumns } from '@/pages/home/todo-columns.tsx';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import { getCoreRowModel, Table, useReactTable } from '@tanstack/react-table';
+import {
+  DialogOption,
+  OptionsDialog,
+} from '@/components/custom/OptionsDialog.tsx';
+import { fetchTodos } from '@/utils/todo.utils.ts';
 
 export function TodoList() {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
   const { setTodos, toggleTimer, toggleTodo, todos } = useTodoStore();
   const [selectedTodo, setSelectedTodo] = useState<TodoEntity | null>(null);
-  const { currentTab, pushTab } = useTabStore();
+  const { currentTab, pushTab, popTab } = useTabStore();
   const [toggling, setToggling] = useState(false);
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/todo`)
-      .then(({ data }) => {
-        console.log(data);
-        setTodos(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [currentTab]);
+    fetchTodos(setTodos);
+  }, []);
+
+  const onEditTodo = () => {
+    setDialogOpen(true);
+    pushTab(Tab.ADD_TASK);
+    // setOptionsDialogOpen(false);
+  };
 
   const onSelectTodo = (todo: TodoEntity) => {
     console.log(todo);
-    setDialogOpen(true);
+    setOptionsDialogOpen(true);
     setSelectedTodo(todo);
-    pushTab(Tab.ADD_TASK);
+    pushTab(Tab.OPEN_DIALOG);
   };
 
   const getSelectedTodo = () => {
@@ -45,18 +49,37 @@ export function TodoList() {
     return todos.find((d) => d.id === id);
   };
 
+  const onToggleTodoTimer = () => {
+    const found = getSelectedTodo();
+    if (!found) {
+      throw new Error('todo not found for toggling done');
+    }
+    toggleTimer(found.id);
+    toggleTimerApi(found);
+    const prevOptionsDialogOpen = optionsDialogOpen;
+    setTimeout(() => {
+      if (prevOptionsDialogOpen) {
+        // setRowSelection({ 0: true });
+      }
+    });
+  };
+
+  const onToggleTodoStatus = () => {
+    const found = getSelectedTodo();
+    if (!found) {
+      throw new Error('todo not found for toggling done');
+    }
+    toggleTodo(found.id);
+    toggleDoneApi(found);
+  }
+
   useHotkeys(
     't',
     () => {
       // because of duplicate key activation
       // https://github.com/JohannesKlauss/react-hotkeys-hook/issues/1013
       setToggling(true);
-      const found = getSelectedTodo();
-      if (!found) {
-        throw new Error('todo not found for toggling done');
-      }
-      toggleTimer(found.id);
-      toggleTimerApi(found);
+      onToggleTodoTimer();
       // setRunningTodo(found);
       setToggling(false);
     },
@@ -118,6 +141,8 @@ export function TodoList() {
       .put(`${import.meta.env.VITE_BACKEND_URL}/todo/${value.id}`, value)
       .then((res) => {
         console.log(res);
+        fetchTodos(setTodos);
+        setRowSelection({ [0]: true });
       })
       .catch((err) => console.log(err));
   };
@@ -141,6 +166,12 @@ export function TodoList() {
     });
   }, []);
 
+  const options: DialogOption[] = [
+    { id: 1, value: 'Edit Todo', action: onEditTodo },
+    { id: 2, value: 'Toggle Timer', action: onToggleTodoTimer },
+    { id: 3, value: 'Toggle Status', action: onToggleTodoStatus},
+  ];
+
   return (
     <>
       <ViTable
@@ -153,6 +184,11 @@ export function TodoList() {
         open={dialogOpen}
         setOpen={setDialogOpen}
         onSubmitForm={editTodo}
+      />
+      <OptionsDialog
+        options={options}
+        open={optionsDialogOpen}
+        setOpen={setOptionsDialogOpen}
       />
     </>
   );

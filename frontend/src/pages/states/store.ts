@@ -7,6 +7,7 @@ export enum Tab {
   EDIT_TASK = 'EDIT_TASK',
   ADD_TASK = 'ADD_TASK',
   TIMELINE = 'TIMELINE',
+  OPEN_DIALOG = 'OPEN_DIALOG',
 }
 
 export interface WithId {
@@ -22,6 +23,8 @@ export interface TodoEntity {
   done: boolean;
   running: boolean;
   startTime?: Date;
+  updatedAt: Date;
+  createdAt: Date;
 }
 
 export type TimeTracking = {
@@ -52,102 +55,114 @@ export interface TabState {
   popTab: () => void;
 }
 
-export const useTabStore = create<TabState>()((set) => ({
-  currentTab: Tab.TASK_LIST,
-  tabHistory: [Tab.TASK_LIST],
-  setTab: (tab) =>
-    set(() => {
-      return {
-        currentTab: tab,
-        tabHistory: [tab],
-      };
-    }),
-  pushTab: (tab) =>
-    set((state) => {
-      return {
-        currentTab: tab,
-        tabHistory: [...state.tabHistory, tab],
-      };
-    }),
-  popTab: () =>
-    set(({ tabHistory }) => {
-      const tab = tabHistory[tabHistory.length - 2];
-      return {
-        currentTab: tab,
-        tabHistory: tabHistory.slice(0, tabHistory.length - 1),
-      };
-    }),
-}));
-
-export const useTodoStore = create<TodoState>()(
+export const useTabStore = create<TabState>()(
   devtools((set) => ({
-    todos: [],
-    timeline: [],
-    timelineRows: [],
-    // runningTodo: undefined,
-    setTodos: (todos) =>
-      set((state) => {
+    currentTab: Tab.TASK_LIST,
+    tabHistory: [Tab.TASK_LIST],
+    setTab: (tab) =>
+      set(() => {
         return {
-          ...state,
-          todos: todos,
+          currentTab: tab,
+          tabHistory: [tab],
         };
       }),
-    toggleTodo: (id) => {
-      set((state) => {
-        const todo = state.todos.find((t) => t.id === id);
-        if (!todo) return state;
-
-        todo.done = !todo.done;
-        return {
-          ...state,
-          todos: [...state.todos],
-        };
-      });
-    },
-    toggleTimer: (id) => {
-      set((state) => {
-        const todos = state.todos.map((todo) => {
-          if (todo.id === id) {
-            todo.running = !todo.running;
-          } else {
-            todo.running = false;
-          }
-          return todo;
-        });
-        let found: TodoEntity | undefined = todos.find((t) => t.id === id);
-        if (found?.running) {
-          found.startTime = new Date();
-        } else {
-          found = undefined;
-        }
-
-        return {
-          ...state,
-          todos: [...todos],
-          runningTodo: found,
-        };
-      });
-    },
-    setRunningTodo: (todo) =>
+    pushTab: (tab) =>
       set((state) => {
         return {
-          ...state,
-          runningTodo: todo,
+          currentTab: tab,
+          tabHistory: [...state.tabHistory, tab],
         };
       }),
-    setTimeline: (tracks) =>
-      set((state) => {
+    popTab: () =>
+      set(({ tabHistory }) => {
+        const tab = tabHistory[tabHistory.length - 2];
         return {
-          ...state,
-          timeline: tracks,
-        };
-      }),
-    setTimelineRows: (rows) =>
-      set((state) => {
-        return {
-          ...state,
-          timelineRows: rows,
+          currentTab: tab,
+          tabHistory: tabHistory.slice(0, tabHistory.length - 1),
         };
       }),
   })),
+);
+
+export const useTodoStore = create<TodoState>()(
+  devtools(
+    (set) => ({
+      todos: [],
+      timeline: [],
+      timelineRows: [],
+      // runningTodo: undefined,
+      setTodos: (todos) =>
+        set((state) => {
+          todos = todos.map((t) => {
+            t.createdAt = new Date(t.createdAt);
+            t.updatedAt = new Date(t.updatedAt);
+            return t;
+          });
+          return {
+            ...state,
+            todos: todos,
+          };
+        }),
+      toggleTodo: (id) => {
+        set((state) => {
+          const todo = state.todos.find((t) => t.id === id);
+          if (!todo) return state;
+
+          todo.done = !todo.done;
+          todo.updatedAt = new Date();
+          return {
+            ...state,
+            todos: [...state.todos],
+          };
+        });
+      },
+      toggleTimer: (id) => {
+        set((state) => {
+          const todos = state.todos.map((todo) => {
+            if (todo.id === id) {
+              todo.running = !todo.running;
+            } else {
+              todo.running = false;
+            }
+            return todo;
+          });
+          let found: TodoEntity | undefined = todos.find((t) => t.id === id);
+          if (found) found.updatedAt = new Date();
+          if (found?.running) {
+            found.startTime = new Date();
+          } else {
+            found = undefined;
+          }
+
+          return {
+            ...state,
+            todos: [...todos],
+            runningTodo: found,
+          };
+        });
+      },
+      setRunningTodo: (todo) =>
+        set((state) => {
+          return {
+            ...state,
+            runningTodo: todo,
+          };
+        }),
+      setTimeline: (tracks) =>
+        set((state) => {
+          return {
+            ...state,
+            timeline: tracks,
+          };
+        }),
+      setTimelineRows: (rows) =>
+        set((state) => {
+          return {
+            ...state,
+            timelineRows: rows,
+          };
+        }),
+    }),
+    { trace: 'tabs' },
+  ),
 );

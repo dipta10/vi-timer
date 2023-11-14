@@ -33,7 +33,7 @@ export function ViTable<TData extends WithId>({
     if (dataLength != 0) {
       table.setRowSelection({ 0: true });
     }
-  }, []);
+  }, [table.getRowModel().rows.length]);
 
   // useEffect to scroll to the selected tr element when the component mounts
   useEffect(() => {
