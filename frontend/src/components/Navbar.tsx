@@ -31,11 +31,10 @@ export function Navbar() {
           Todo List
         </Button>
       </div>
-      <div className='flex flex-row gap-2'>
-        <CurrentTodo></CurrentTodo>
+      <div className='flex flex-row gap-2 items-center'>
         <ModeToggle />
+        <CurrentTodo></CurrentTodo>
       </div>
-      tabhistory: {tabHistory.join(', ')}
     </div>
   );
 }

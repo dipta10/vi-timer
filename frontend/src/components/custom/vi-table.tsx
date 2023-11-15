@@ -115,14 +115,13 @@ export function ViTable<TData extends WithId>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={row.getIsSelected() ? 'active-input' : ''}
+                  className={row.getIsSelected() ? 'active-input cursor-pointer' : 'cursor-pointer'}
                   ref={(el) =>
                     row.getIsSelected() ? setSelectedRowRef(el) : null
                   }
                   onClick={() => {
-                    table.setRowSelection({});
-                    row.toggleSelected();
-                    selectRow();
+                    table.setRowSelection({ [row.index]: true });
+                    onSelectRow(row.original);
                   }}
                 >
                   {row.getVisibleCells().map((cell) => {

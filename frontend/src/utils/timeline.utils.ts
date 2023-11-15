@@ -57,7 +57,12 @@ function processTracksResponse(
   }
 
   const timelineRows: TimelineRow[] = [];
-  for (const dateStr of Object.keys(dates).sort().reverse()) {
+  const sortedDates = Object.keys(dates)
+    .map((t) => new Date(t))
+    .sort((a: any, b: any) => a - b)
+    .reverse()
+    .map((d) => moment(d).format(keyDateFormat));
+  for (const dateStr of sortedDates) {
     const dayRow: TimelineRow = {
       title: moment(dateStr, keyDateFormat).format('Do MMM, Y'),
       totalTimeSpent: 0,

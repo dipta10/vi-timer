@@ -156,7 +156,8 @@ router.put('/:id/toggle-done', async (req, res) => {
 });
 
 router.get('/timeline', async (_, res: Response) => {
-  const earlier = moment().subtract(7, 'days').startOf('day').toDate();
+  const days = 30;
+  const earlier = moment().subtract(days, 'days').startOf('day').toDate();
 
   const tracking = await prisma.timeTracking.findMany({
     orderBy: [
