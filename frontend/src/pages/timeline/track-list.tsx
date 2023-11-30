@@ -8,22 +8,17 @@ import {
 import {
   Table,
   TableBody,
-  TableCell, TableFooter,
+  TableCell,
   TableHead,
   TableHeader,
-  TableRow
-} from "@/components/ui/table";
+  TableRow,
+} from '@/components/ui/table';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import { Key } from 'ts-key-enum';
-import {
-  Tab, TimeTracking,
-  TodoEntity,
-  useTabStore,
-  useTodoStore
-} from "@/pages/states/store.ts";
-import axios from 'axios';
+import { Tab, TodoEntity, useTabStore } from '@/pages/states/store.ts';
+import { secondsToHms } from '@/utils/time.utils.ts';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -63,26 +58,20 @@ export function TrackList<TData, TValue>({
     const selected = parseInt(Object.keys(rowSelection)[0]);
     setRowSelection({ [(selected + 1) % data.length]: true });
   };
-
   const onPressUp = () => {
     const selected = parseInt(Object.keys(rowSelection)[0]);
     setRowSelection({ [(selected - 1 + data.length) % data.length]: true });
   };
 
   useHotkeys(`${Key.ArrowDown}, j`, () => onPressDown(), {
-    enabled: currentTab === Tab.TASK_LIST,
+    enabled: currentTab === Tab.TIMELINE,
   });
   useHotkeys('up, k', () => onPressUp(), {
-    enabled: currentTab === Tab.TASK_LIST,
+    enabled: currentTab === Tab.TIMELINE,
   });
 
   const editTodo = (value: Partial<TodoEntity>) => {
-    axios
-      .put(`${import.meta.env.VITE_BACKEND_URL}/todo/${value.id}`, value)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => console.log(err));
+    console.log('value is', value);
   };
 
   // useEffect to scroll to the selected tr element when the component mounts
@@ -117,10 +106,38 @@ export function TrackList<TData, TValue>({
         <TableBody>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => {
-              console.log('row is', row.original);
               const type = (row.original as any).type;
-              let className = type === 'day' ? 'font-bold bg-slate-900' : '';
+              let className = '';
               if (row.getIsSelected()) className += ' active-input';
+              if (type !== 'day')
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && 'selected'}
+                    className={`${className}`}
+                    ref={(el) =>
+                      row.getIsSelected() ? setSelectedRowRef(el) : null
+                    }
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell key={cell.id}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+
+              className += ' font-bold dark:bg-slate-900 bg-slate-300';
+              const title = (row.original as any).title;
+              const spent = (row.original as any).totalTimeSpent;
+              const spentStr = secondsToHms(spent);
+              console.log('total', title);
+              console.log('spent', spentStr);
               return (
                 <TableRow
                   key={row.id}
@@ -130,16 +147,12 @@ export function TrackList<TData, TValue>({
                     row.getIsSelected() ? setSelectedRowRef(el) : null
                   }
                 >
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    );
-                  })}
+                  <TableCell colSpan={columns.length} className='text-center'>
+                    <div className='flex flex-row justify-center gap-4'>
+                      <div>{title}</div>
+                      <div>{spentStr}</div>
+                    </div>
+                  </TableCell>
                 </TableRow>
               );
             })

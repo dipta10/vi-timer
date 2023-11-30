@@ -1,3 +1,4 @@
+// TODO move this to todo-list page
 import { ColumnDef } from '@tanstack/react-table';
 import { TodoEntity } from '@/pages/states/store.ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

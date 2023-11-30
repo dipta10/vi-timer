@@ -1,5 +1,3 @@
-import { todoColumns } from './todo-columns.tsx';
-import { TodoList } from './todo-list.tsx';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import React, { useEffect, useState } from 'react';
 import {
@@ -11,14 +9,15 @@ import {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 import axios from 'axios';
-import { fetchRunningTodo } from '@/utils/todo.utils.ts';
+import { fetchRunningTodo, fetchTodos } from '@/utils/todo.utils.ts';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar.tsx';
+import { TodoList } from '@/pages/todo-list/TodoList.tsx';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const { setTodos, setRunningTodo, todos } = useTodoStore();
-  const { currentTab, pushTab } = useTabStore();
+  const { setRunningTodo, setTodos } = useTodoStore();
+  const { currentTab, pushTab, setTab } = useTabStore();
   const navigate = useNavigate();
   useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick(), {
     enabled: currentTab === Tab.TASK_LIST,
@@ -33,18 +32,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/todo`)
-      .then(({ data }) => {
-        console.log(data);
-        setTodos(data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [currentTab]);
-
-  useEffect(() => {
+    setTab(Tab.TASK_LIST);
+    console.log('fetching running todo');
     fetchRunningTodo(setRunningTodo);
   }, []);
 
@@ -53,6 +42,7 @@ export default function Home() {
       .post(`${import.meta.env.VITE_BACKEND_URL}/todo`, value)
       .then((res) => {
         console.log(res);
+        fetchTodos(setTodos);
       })
       .catch((err) => console.log(err));
   };
@@ -60,8 +50,7 @@ export default function Home() {
   return (
     <div className='container mx-auto py-10'>
       <Navbar />
-      {/*Todo List*/}
-      <TodoList columns={todoColumns} data={todos} />
+      <TodoList />
       <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
     </div>
   );
