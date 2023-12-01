@@ -3,17 +3,8 @@
   "version": "1.0.0",
   "main": "index.ts",
   "license": "MIT",
-  "dependencies": {
-    "@prisma/client": "^4.16.1",
-    "axios": "^1.5.1",
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "moment": "^2.29.4"
-  },
   "scripts": {
-    "build": "npx tsc",
+    "build": "npx tsc -p tsconfig.prod.json",
     "start": "node dist/index.js",
     "dbg": "nodemon index.ts",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
@@ -25,12 +16,23 @@
     "db:deploy": "prisma migrate deploy",
     "db:reset": "npx prisma migrate reset"
   },
+  "dependencies": {
+    "prisma": "^4.16.1",
+    "@prisma/client": "^4.16.1",
+    "@types/node": "^20.3.1",
+    "axios": "^1.5.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "moment": "^2.29.4",
+    "typescript": "*"
+  },
   "devDependencies": {
     "@babel/core": "^7.22.5",
     "@babel/eslint-parser": "^7.22.5",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
-    "@types/node": "^20.3.1",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
     "babel-eslint": "^10.1.0",
@@ -46,8 +48,6 @@
     "jest-mock-extended": "2.0.4",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
-    "prisma": "^4.16.1",
-    "ts-node": "^10.9.1",
-    "typescript": "*"
+    "ts-node": "^10.9.1"
   }
 }
