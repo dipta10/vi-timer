@@ -14,6 +14,11 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  preview: {
+    port: 3000,
+    // https://stackoverflow.com/questions/70694187/vite-server-is-running-but-not-working-on-localhost
+    host: '0.0.0.0',
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
