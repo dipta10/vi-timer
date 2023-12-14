@@ -21,7 +21,6 @@ function Timeline() {
   return (
     <div className='container mx-auto py-10'>
       <Navbar />
-      All time entries in past 7 days
       <div>
         <TrackList columns={trackColumnsByDay} data={timelineRows} />
       </div>

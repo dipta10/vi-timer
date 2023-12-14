@@ -31,7 +31,7 @@ export function TodoList() {
 
   const onEditTodo = () => {
     setDialogOpen(true);
-    pushTab(Tab.ADD_TASK);
+    pushTab(Tab.EDIT_TASK);
     // setOptionsDialogOpen(false);
   };
 
@@ -184,6 +184,7 @@ export function TodoList() {
         open={dialogOpen}
         setOpen={setDialogOpen}
         onSubmitForm={editTodo}
+        tabName={Tab.EDIT_TASK}
       />
       <OptionsDialog
         options={options}

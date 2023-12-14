@@ -29,6 +29,7 @@ interface EditTaskProps {
   open: boolean;
   setOpen: any;
   onSubmitForm: (todo: Partial<TodoEntity>) => void;
+  tabName: Tab;
 }
 
 const formSchema = z.object({
@@ -37,7 +38,7 @@ const formSchema = z.object({
 });
 
 export function EditTaskDialog(prop: EditTaskProps) {
-  const { popTab, currentTab, tabHistory } = useTabStore();
+  const { popTab, currentTab } = useTabStore();
   const inputRefs = useRef<HTMLInputElement[]>([]);
   const [activeInput, setActiveInput] = useState(0);
   const [insertMode, setInsertMode] = useState(false);
@@ -67,7 +68,7 @@ export function EditTaskDialog(prop: EditTaskProps) {
       setActiveInput((p) => (p + 1) % numberOfActiveInput);
     },
     {
-      enabled: currentTab === Tab.ADD_TASK && !insertMode && prop.open,
+      enabled: currentTab === prop.tabName && !insertMode && prop.open,
     },
   );
 
@@ -79,7 +80,7 @@ export function EditTaskDialog(prop: EditTaskProps) {
       );
     },
     {
-      enabled: currentTab === Tab.ADD_TASK && !insertMode && prop.open,
+      enabled: currentTab === prop.tabName && !insertMode && prop.open,
     },
   );
 
@@ -90,7 +91,7 @@ export function EditTaskDialog(prop: EditTaskProps) {
       inputRefs.current[activeInput].setAttribute('disabled', 'disabled');
     },
     {
-      enabled: currentTab === Tab.ADD_TASK && insertMode && prop.open,
+      enabled: currentTab === prop.tabName && insertMode && prop.open,
       enableOnContentEditable: true,
       enableOnFormTags: true,
       preventDefault: true,
@@ -108,7 +109,7 @@ export function EditTaskDialog(prop: EditTaskProps) {
       }
     },
     {
-      enabled: currentTab === Tab.ADD_TASK && prop.open,
+      enabled: currentTab === prop.tabName && prop.open,
       enableOnContentEditable: true,
       enableOnFormTags: true,
       preventDefault: true,
@@ -127,7 +128,7 @@ export function EditTaskDialog(prop: EditTaskProps) {
       inputRefs.current[activeInput].focus();
     },
     {
-      enabled: currentTab === Tab.ADD_TASK && !insertMode,
+      enabled: currentTab === prop.tabName && !insertMode,
       preventDefault: true,
     },
   );
