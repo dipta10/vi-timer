@@ -11,7 +11,7 @@ export function Layout() {
       Notification.requestPermission();
     }
 
-    const audio = new Audio('./public/iphone_sound.mp3');
+    const audio = new Audio('./iphone_sound.mp3');
     audio.addEventListener('canplaythrough', () => {
       console.log('notification sound can be played');
     });
