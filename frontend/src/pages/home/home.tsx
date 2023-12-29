@@ -27,15 +27,17 @@ export default function Home() {
   });
 
   const onAddTaskBtnClick = () => {
-    setOpen(true);
     pushTab(Tab.ADD_TASK);
   };
 
   useEffect(() => {
     setTab(Tab.TASK_LIST);
-    console.log('fetching running todo');
     fetchRunningTodo(setRunningTodo);
   }, []);
+
+  useEffect(() => {
+    if (currentTab === Tab.ADD_TASK) setOpen(true);
+  }, [currentTab]);
 
   const addTodo = (value: Partial<TodoEntity>) => {
     axios
@@ -51,7 +53,12 @@ export default function Home() {
     <div className='container mx-auto py-10'>
       <Navbar />
       <TodoList />
-      <EditTaskDialog open={open} setOpen={setOpen} onSubmitForm={addTodo} />
+      <EditTaskDialog
+        open={open}
+        setOpen={setOpen}
+        onSubmitForm={addTodo}
+        tabName={Tab.ADD_TASK}
+      />
     </div>
   );
 }

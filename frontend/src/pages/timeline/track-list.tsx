@@ -170,6 +170,7 @@ export function TrackList<TData, TValue>({
         open={dialogOpen}
         setOpen={setDialogOpen}
         onSubmitForm={editTodo}
+        tabName={Tab.ADD_TASK}
       />
     </div>
   );
