@@ -1,10 +1,16 @@
 import express, { type Express, type Request, type Response } from 'express';
+import expressSession from 'express-session';
+import passport from 'passport';
 import dotenv from 'dotenv';
 import { json, urlencoded } from 'body-parser';
 import cors from 'cors';
 import todoRouter from './src/routes/todo.route';
 import userRouter from './src/routes/user.route';
 import projectRoute from './src/routes/project.route';
+import { COOKIE_KEY } from './src/utils/secrets';
+import authRoute from './src/routes/auth.route';
+
+import './src/config/passport';
 
 // We can use the free tier of PlanetScale
 // https://blog.logrocket.com/organizing-express-js-project-structure-better-productivity/
@@ -21,9 +27,24 @@ app.use(
   }),
 );
 
+app.use(
+  expressSession({
+    secret: COOKIE_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, // 24 hours?
+    },
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use('/todo', todoRouter);
 app.use('/user', userRouter);
 app.use('/project', projectRoute);
+app.use('/auth', authRoute);
 app.get('/', (req: Request, res: Response) => {
   res.send('Express + TypeScript Server');
 });

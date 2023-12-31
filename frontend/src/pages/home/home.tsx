@@ -31,6 +31,12 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    if (token) {
+      localStorage.setItem('accessToken', token);
+    }
+
     setTab(Tab.TASK_LIST);
     fetchRunningTodo(setRunningTodo);
   }, []);
