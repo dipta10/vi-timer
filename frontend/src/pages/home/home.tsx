@@ -8,11 +8,11 @@ import {
 } from '@/pages/states/store.ts';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
-import axios from 'axios';
 import { fetchRunningTodo, fetchTodos } from '@/utils/todo.utils.ts';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar.tsx';
 import { TodoList } from '@/pages/todo-list/TodoList.tsx';
+import axios from '@/utils/config';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
@@ -33,8 +33,10 @@ export default function Home() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
+    const name = urlParams.get('name') || 'Display Name Not Found';
     if (token) {
       localStorage.setItem('accessToken', token);
+      localStorage.setItem('name', name);
     }
 
     setTab(Tab.TASK_LIST);
@@ -47,7 +49,7 @@ export default function Home() {
 
   const addTodo = (value: Partial<TodoEntity>) => {
     axios
-      .post(`${import.meta.env.VITE_BACKEND_URL}/todo`, value)
+      .post('/todo', value)
       .then((res) => {
         console.log(res);
         fetchTodos(setTodos);

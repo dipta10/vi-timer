@@ -7,7 +7,7 @@ import cors from 'cors';
 import todoRouter from './src/routes/todo.route';
 import userRouter from './src/routes/user.route';
 import projectRoute from './src/routes/project.route';
-import { COOKIE_KEY } from './src/utils/secrets';
+import { COOKIE_KEY, verifyToken } from './src/utils/secrets';
 import authRoute from './src/routes/auth.route';
 
 import './src/config/passport';
@@ -41,7 +41,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/todo', todoRouter);
+app.use('/todo', verifyToken, todoRouter);
 app.use('/user', userRouter);
 app.use('/project', projectRoute);
 app.use('/auth', authRoute);

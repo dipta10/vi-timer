@@ -7,7 +7,7 @@ const router = Router();
 
 const prisma = new PrismaClient();
 
-router.get('/', async (_, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   const todos = await prisma.todo.findMany({
     orderBy: [
       {
@@ -17,15 +17,19 @@ router.get('/', async (_, res: Response) => {
         updatedAt: 'desc',
       },
     ],
+    where: {
+      userId: req.user?.id,
+    },
   });
 
   res.json(todos);
 });
 
-router.get('/get-running', async (_, res: Response) => {
+router.get('/get-running', async (req: Request, res: Response) => {
   const todos = await prisma.todo.findFirst({
     where: {
       running: true,
+      userId: req.user?.id,
     },
     include: {
       TimeTracking: {
@@ -44,6 +48,7 @@ router.post('/', async (req: Request, res: Response) => {
     data: {
       title: req.body.title,
       description: req.body.description,
+      userId: req.user?.id,
     },
   });
 
@@ -61,6 +66,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     data: {
       title: req.body.title,
       description: req.body.description,
+      userId: req.user?.id,
     },
   });
 

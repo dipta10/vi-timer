@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '@/utils/config';
 import { TimeTracking } from '@/pages/states/store.ts';
 import moment from 'moment';
 import { TimelineRow } from '@/components/types/timeline.ts';

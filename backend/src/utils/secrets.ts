@@ -2,14 +2,17 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 export const ENVIRONMENT = process.env.NODE_ENV;
+export const PRODUCTION = ENVIRONMENT === 'production';
 export const PORT = (process.env.PORT || 3000) as number;
 
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 export const COOKIE_KEY = process.env.COOKIE_KEY || '';
 
-export const generateAccessToken = (user: any) =>
-  jwt.sign(user, 'my-secret-key', { expiresIn: '1h' });
+export const generateAccessToken = (user: Request['user']) => {
+  if (!user) return '';
+  return jwt.sign(user, 'my-secret-key', { expiresIn: '1h' });
+};
 
 export const verifyToken = (
   req: Request,
@@ -27,7 +30,7 @@ export const verifyToken = (
       return res.status(401).json({ error: 'Unauthorized: Invalid token' });
     }
 
-    req.user = decoded; // Attach the user to the request object
+    req.user = decoded as any; // Attach the user to the request object
     next();
   });
 };

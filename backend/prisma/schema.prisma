@@ -12,8 +12,10 @@ model User {
   id        String    @id @default(uuid())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  username  String
+  name      String
+  googleId  String
   Project   Project[]
+  Todo      Todo[]
 }
 
 model Project {
@@ -36,6 +38,8 @@ model Todo {
   isDeleted    Boolean        @default(false)
   running      Boolean        @default(false)
   TimeTracking TimeTracking[]
+  User         User?          @relation(fields: [userId], references: [id])
+  userId       String?
 }
 
 model TimeTracking {

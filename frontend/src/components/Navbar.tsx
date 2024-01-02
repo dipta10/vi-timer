@@ -4,7 +4,7 @@ import { Tab, useTabStore } from '@/pages/states/store.ts';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ModeToggle } from '@/components/mode-toggle.tsx';
-import axios from 'axios';
+import axios from '@/utils/config';
 
 export function Navbar() {
   const { pushTab, currentTab } = useTabStore();
@@ -32,7 +32,7 @@ export function Navbar() {
 
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios
-      .get(`${import.meta.env.VITE_BACKEND_URL}/auth/secret`)
+      .get(`/auth/secret`)
       .then((res) => {
         console.log(res);
       })
@@ -68,7 +68,6 @@ export function Navbar() {
         <CurrentTodo></CurrentTodo>
         <Button
           className={`border rounded-md px-4 py-2 bg-white text-slate-900 text-sm`}
-          // onClick={() => navigate(`${import.meta.env.VITE_BACKEND_URL}/auth/google`)}
           onClick={() =>
             (window.location.href = `${
               import.meta.env.VITE_BACKEND_URL

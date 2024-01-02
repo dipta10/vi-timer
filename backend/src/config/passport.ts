@@ -22,7 +22,10 @@ passport.use(
       done: VerifyCallback,
     ) => {
       // TODO get and set profile details in DB
-      done(null, profile);
+      done(null, {
+        googleId: profile.id,
+        name: profile.displayName,
+      });
     },
   ),
 );

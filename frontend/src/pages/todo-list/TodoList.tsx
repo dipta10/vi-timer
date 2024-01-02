@@ -7,7 +7,7 @@ import {
   useTodoStore,
 } from '@/pages/states/store.ts';
 import { useHotkeys } from 'react-hotkeys-hook';
-import axios from 'axios';
+import axios from '@/utils/config';
 import { todoColumns } from '@/pages/home/todo-columns.tsx';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import { getCoreRowModel, Table, useReactTable } from '@tanstack/react-table';
@@ -115,7 +115,7 @@ export function TodoList() {
   const toggleDoneApi = (value: Partial<TodoEntity>) => {
     axios
       .put(
-        `${import.meta.env.VITE_BACKEND_URL}/todo/${value.id}/toggle-done`,
+        `/todo/${value.id}/toggle-done`,
         {},
       )
       .then((res) => {
@@ -127,7 +127,7 @@ export function TodoList() {
   const toggleTimerApi = (value: Partial<TodoEntity>) => {
     axios
       .post(
-        `${import.meta.env.VITE_BACKEND_URL}/todo/${value.id}/toggle-timer`,
+        `/todo/${value.id}/toggle-timer`,
         {},
       )
       .then((res) => {
@@ -138,7 +138,7 @@ export function TodoList() {
 
   const editTodo = (value: Partial<TodoEntity>) => {
     axios
-      .put(`${import.meta.env.VITE_BACKEND_URL}/todo/${value.id}`, value)
+      .put(`/todo/${value.id}`, value)
       .then((res) => {
         console.log(res);
         fetchTodos(setTodos);
