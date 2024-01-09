@@ -1,5 +1,10 @@
 import { flexRender, Table as ReactTable } from '@tanstack/react-table';
-import { Tab, useTabStore, WithId } from '@/pages/states/store.ts';
+import {
+  Tab,
+  useSessionStore,
+  useTabStore,
+  WithId,
+} from '@/pages/states/store.ts';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
@@ -27,6 +32,7 @@ export function ViTable<TData extends WithId>({
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab } = useTabStore();
+  const { isLoggedIn } = useSessionStore();
 
   useEffect(() => {
     const dataLength = table.getRowModel().rows.length;
@@ -115,7 +121,11 @@ export function ViTable<TData extends WithId>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className={row.getIsSelected() ? 'active-input cursor-pointer' : 'cursor-pointer'}
+                  className={
+                    row.getIsSelected()
+                      ? 'active-input cursor-pointer'
+                      : 'cursor-pointer'
+                  }
                   ref={(el) =>
                     row.getIsSelected() ? setSelectedRowRef(el) : null
                   }
@@ -143,7 +153,7 @@ export function ViTable<TData extends WithId>({
                 colSpan={table.getAllColumns().length}
                 className='h-24 text-center'
               >
-                No Todos Yet!
+                {!isLoggedIn ? 'Please log In First!' : 'Not Todos Yet!'}
               </TableCell>
             </TableRow>
           )}

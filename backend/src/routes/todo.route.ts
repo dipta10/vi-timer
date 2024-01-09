@@ -1,13 +1,13 @@
 import { Request, Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import moment from 'moment';
-import { stopRunningTasks } from '../utils/todo-utils';
+import stopRunningTasks from '../utils/todo-utils';
 
 const router = Router();
 
 const prisma = new PrismaClient();
 
-router.get('/', async (_, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
   const todos = await prisma.todo.findMany({
     orderBy: [
       {
@@ -17,15 +17,18 @@ router.get('/', async (_, res: Response) => {
         updatedAt: 'desc',
       },
     ],
+    where: {
+      userId: req.user?.id,
+    },
   });
-
   res.json(todos);
 });
 
-router.get('/get-running', async (_, res: Response) => {
+router.get('/get-running', async (req: Request, res: Response) => {
   const todos = await prisma.todo.findFirst({
     where: {
       running: true,
+      userId: req.user?.id,
     },
     include: {
       TimeTracking: {
@@ -44,6 +47,7 @@ router.post('/', async (req: Request, res: Response) => {
     data: {
       title: req.body.title,
       description: req.body.description,
+      userId: req.user?.id,
     },
   });
 
@@ -61,6 +65,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     data: {
       title: req.body.title,
       description: req.body.description,
+      userId: req.user?.id,
     },
   });
 
@@ -100,7 +105,7 @@ router.post('/:id/toggle-timer', async (req, res) => {
     throw new Error('Unable to find todo to toggle running state');
   }
 
-  await stopRunningTasks(prisma);
+  await stopRunningTasks(prisma, req.user!.id);
 
   const newRunningState = !todo.running;
 
@@ -155,7 +160,7 @@ router.put('/:id/toggle-done', async (req, res) => {
   res.json('done');
 });
 
-router.get('/timeline', async (_, res: Response) => {
+router.get('/timeline', async (req: Request, res: Response) => {
   const days = 30;
   const earlier = moment().subtract(days, 'days').startOf('day').toDate();
 
@@ -171,6 +176,9 @@ router.get('/timeline', async (_, res: Response) => {
     where: {
       startTime: {
         gte: earlier,
+      },
+      todo: {
+        userId: req.user!.id,
       },
     },
     include: {

@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useSessionStore } from '../states/store';
 
 export function Layout() {
   // TODO: bring in the header in this outlet!
+  const { updateAccessToken } = useSessionStore();
 
   useEffect(() => {
     if (!('Notification' in window)) {
@@ -37,6 +39,10 @@ export function Layout() {
     }, 1000 * 60 * 10); // 10 minutes
 
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // updateAccessToken();
   }, []);
 
   return (

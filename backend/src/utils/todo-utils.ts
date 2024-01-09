@@ -1,11 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 
-export async function stopRunningTasks(prisma: PrismaClient) {
+export default async function stopRunningTasks(
+  prisma: PrismaClient,
+  userId: string,
+) {
   // get current running tasks other than the current task
   // and stop those tasks
   const runningTodos = await prisma.todo.findMany({
     where: {
       running: true,
+      userId,
     },
     include: {
       TimeTracking: {

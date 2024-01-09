@@ -19,16 +19,16 @@ export function CurrentTodo() {
 
   return (
     runningTodo && (
-      <div className='border rounded p-3 flex flex-row items-center gap-3'>
-        <div className='flex flex-row items-end gap-3'>
+      <div className='border rounded py-2 px-3 flex flex-row items-center gap-3'>
+        <div className='flex flex-row items-end gap-3 text-sm'>
           {todoTitle}
           <FontAwesomeIcon
             style={{
-              fontSize: 'x-large',
+              fontSize: 'large',
               color: 'brown',
             }}
-            className=''
             icon={faClock}
+            className='fa-beat'
           />
           <CurrentTodoTimer />
         </div>

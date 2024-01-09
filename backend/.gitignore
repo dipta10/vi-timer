@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 .idea
 .DS_STORE
+.env

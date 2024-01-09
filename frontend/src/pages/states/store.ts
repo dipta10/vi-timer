@@ -166,3 +166,53 @@ export const useTodoStore = create<TodoState>()(
     { trace: 'tabs' },
   ),
 );
+
+export interface SessionState {
+  accessToken?: string;
+  name?: string;
+  isLoggedIn: boolean;
+  setTokenAndName: (accessToken: string, name: string) => void;
+  updateAccessToken: () => void;
+  clearSession: () => void;
+}
+
+export const useSessionStore = create<SessionState>()(
+  devtools(
+    (set) => ({
+      isLoggedIn: false,
+      setTokenAndName: (accessToken: string, name: string) => {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('name', name);
+        set(() => {
+          return {
+            accessToken,
+            name,
+            isLoggedIn: true,
+          };
+        });
+      },
+      clearSession: () => {
+        localStorage.clear();
+        set(() => {
+          return {
+            accessToken: '',
+            name: '',
+            isLoggedIn: false,
+          };
+        });
+      },
+      updateAccessToken: () => {
+        const accessToken = localStorage.getItem('accessToken') as string;
+        const name = localStorage.getItem('name') as string;
+        set(() => {
+          return {
+            accessToken,
+            name,
+            isLoggedIn: !!accessToken,
+          };
+        });
+      },
+    }),
+    { trace: 'session' },
+  ),
+);

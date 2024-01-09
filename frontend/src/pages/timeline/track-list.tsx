@@ -17,7 +17,12 @@ import { useEffect, useState } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { EditTaskDialog } from '@/components/custom/edit-task-dialog.tsx';
 import { Key } from 'ts-key-enum';
-import { Tab, TodoEntity, useTabStore } from '@/pages/states/store.ts';
+import {
+  Tab,
+  TodoEntity,
+  useSessionStore,
+  useTabStore,
+} from '@/pages/states/store.ts';
 import { secondsToHms } from '@/utils/time.utils.ts';
 
 interface DataTableProps<TData, TValue> {
@@ -36,6 +41,7 @@ export function TrackList<TData, TValue>({
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
   const { currentTab, pushTab } = useTabStore();
+  const { isLoggedIn } = useSessionStore();
 
   const table = useReactTable({
     data,
@@ -136,8 +142,6 @@ export function TrackList<TData, TValue>({
               const title = (row.original as any).title;
               const spent = (row.original as any).totalTimeSpent;
               const spentStr = secondsToHms(spent);
-              console.log('total', title);
-              console.log('spent', spentStr);
               return (
                 <TableRow
                   key={row.id}
@@ -159,7 +163,8 @@ export function TrackList<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className='h-24 text-center'>
-                No Todos Yet!
+                {!isLoggedIn ? 'Please log In First!' : 'Not Todos Yet!'}
+                isLoggedIn: {isLoggedIn ? 'true' : 'false'}
               </TableCell>
             </TableRow>
           )}
