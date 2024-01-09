@@ -36,7 +36,6 @@ export function TodoList() {
   };
 
   const onSelectTodo = (todo: TodoEntity) => {
-    console.log(todo);
     setOptionsDialogOpen(true);
     setSelectedTodo(todo);
     pushTab(Tab.OPEN_DIALOG);
@@ -71,7 +70,7 @@ export function TodoList() {
     }
     toggleTodo(found.id);
     toggleDoneApi(found);
-  }
+  };
 
   useHotkeys(
     't',
@@ -114,10 +113,7 @@ export function TodoList() {
 
   const toggleDoneApi = (value: Partial<TodoEntity>) => {
     axios
-      .put(
-        `/todo/${value.id}/toggle-done`,
-        {},
-      )
+      .put(`/todo/${value.id}/toggle-done`, {})
       .then((res) => {
         console.log(res);
       })
@@ -126,10 +122,7 @@ export function TodoList() {
 
   const toggleTimerApi = (value: Partial<TodoEntity>) => {
     axios
-      .post(
-        `/todo/${value.id}/toggle-timer`,
-        {},
-      )
+      .post(`/todo/${value.id}/toggle-timer`, {})
       .then((res) => {
         console.log(res);
       })
@@ -139,8 +132,7 @@ export function TodoList() {
   const editTodo = (value: Partial<TodoEntity>) => {
     axios
       .put(`/todo/${value.id}`, value)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         fetchTodos(setTodos);
         setRowSelection({ [0]: true });
       })
@@ -169,7 +161,7 @@ export function TodoList() {
   const options: DialogOption[] = [
     { id: 1, value: 'Edit Todo', action: onEditTodo },
     { id: 2, value: 'Toggle Timer', action: onToggleTodoTimer },
-    { id: 3, value: 'Toggle Status', action: onToggleTodoStatus},
+    { id: 3, value: 'Toggle Status', action: onToggleTodoStatus },
   ];
 
   return (

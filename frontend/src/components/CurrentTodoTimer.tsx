@@ -9,7 +9,6 @@ export function CurrentTodoTimer() {
   useEffect(() => {
     setTimerValue();
     const interval = setInterval(() => {
-      console.log('int');
       setTimerValue();
     }, 1000);
 

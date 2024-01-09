@@ -8,6 +8,8 @@ export const PORT = (process.env.PORT || 3000) as number;
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 export const COOKIE_KEY = process.env.COOKIE_KEY || '';
+export const UI_URL = process.env.UI_URL as string;
+export const BACKEND_URL = process.env.BACKEND_URL as string;
 
 export const generateAccessToken = (user: Request['user']) => {
   if (!user) return '';

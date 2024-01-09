@@ -14,7 +14,8 @@
     "db:generate-migration": "npx prisma migrate dev --create-only --name",
     "db:push": "prisma db push",
     "db:deploy": "prisma migrate deploy",
-    "db:reset": "npx prisma migrate reset"
+    "db:reset": "npx prisma migrate reset",
+    "db:apply-migration": "prisma migrate dev"
   },
   "dependencies": {
     "@prisma/client": "^4.16.1",

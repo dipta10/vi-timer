@@ -8,14 +8,14 @@ interface Language {
 declare global {
   namespace Express {
     interface User {
-      id?: string;
+      id: string;
       name: string;
       googleId: string;
       // email: string;
     }
     export interface Request {
       language?: Language;
-      user?: User;
+      user: User;
     }
   }
 }

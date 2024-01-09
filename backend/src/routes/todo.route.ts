@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
 import moment from 'moment';
-import { stopRunningTasks } from '../utils/todo-utils';
+import stopRunningTasks from '../utils/todo-utils';
 
 const router = Router();
 
@@ -21,7 +21,6 @@ router.get('/', async (req: Request, res: Response) => {
       userId: req.user?.id,
     },
   });
-
   res.json(todos);
 });
 
@@ -106,7 +105,7 @@ router.post('/:id/toggle-timer', async (req, res) => {
     throw new Error('Unable to find todo to toggle running state');
   }
 
-  await stopRunningTasks(prisma);
+  await stopRunningTasks(prisma, req.user!.id);
 
   const newRunningState = !todo.running;
 
@@ -161,7 +160,7 @@ router.put('/:id/toggle-done', async (req, res) => {
   res.json('done');
 });
 
-router.get('/timeline', async (_, res: Response) => {
+router.get('/timeline', async (req: Request, res: Response) => {
   const days = 30;
   const earlier = moment().subtract(days, 'days').startOf('day').toDate();
 
@@ -177,6 +176,9 @@ router.get('/timeline', async (_, res: Response) => {
     where: {
       startTime: {
         gte: earlier,
+      },
+      todo: {
+        userId: req.user!.id,
       },
     },
     include: {

@@ -19,8 +19,6 @@ const todoColumns: ColumnDef<DialogOption>[] = [
     accessorKey: 'value',
     header: () => <div className='text-left font-bold'>Select Action</div>,
     cell: ({ row }) => {
-      console.log('val is', row.getValue('value'));
-
       return (
         <div
           className={`text-left flex flex-row gap-2 content-center items-center`}

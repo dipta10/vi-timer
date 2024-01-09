@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {
   Tab,
   TodoEntity,
+  useSessionStore,
   useTabStore,
   useTodoStore,
 } from '@/pages/states/store.ts';
@@ -18,7 +19,9 @@ export default function Home() {
   const [open, setOpen] = useState(false);
   const { setRunningTodo, setTodos } = useTodoStore();
   const { currentTab, pushTab, setTab } = useTabStore();
+  const { setTokenAndName, updateAccessToken } = useSessionStore();
   const navigate = useNavigate();
+
   useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick(), {
     enabled: currentTab === Tab.TASK_LIST,
   });
@@ -32,13 +35,14 @@ export default function Home() {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    const token = urlParams.get('accessToken');
     const name = urlParams.get('name') || 'Display Name Not Found';
-    if (token) {
-      localStorage.setItem('accessToken', token);
-      localStorage.setItem('name', name);
-    }
 
+    if (token) {
+      setTokenAndName(token, name);
+    } else {
+      updateAccessToken();
+    }
     setTab(Tab.TASK_LIST);
     fetchRunningTodo(setRunningTodo);
   }, []);
@@ -50,8 +54,7 @@ export default function Home() {
   const addTodo = (value: Partial<TodoEntity>) => {
     axios
       .post('/todo', value)
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         fetchTodos(setTodos);
       })
       .catch((err) => console.log(err));

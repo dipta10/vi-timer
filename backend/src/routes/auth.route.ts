@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import passport from 'passport';
-import { generateAccessToken, verifyToken } from '../utils/secrets';
+import { UI_URL, generateAccessToken, verifyToken } from '../utils/secrets';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -18,7 +18,7 @@ router.get(
   passport.authenticate('google'),
   async ({ user }, res) => {
     if (!user) {
-      res.redirect(`http://localhost:3000`);
+      res.redirect(UI_URL);
       return;
     }
 
@@ -42,20 +42,18 @@ router.get(
       id: dbUser.id,
     });
 
-    // TODO: Here sign user up!
-    res.redirect(
-      `http://localhost:3000?token=${accessToken}&name=${user.name}`,
-    );
+    // TODO: take the value from .env file
+    res.redirect(`${UI_URL}?accessToken=${accessToken}&name=${user.name}`);
   },
 );
 
 router.get('/logout', (req: Request, res: Response) => {
-  // TODO implement logout
+  // TODO this is not proparly loggin out user from google account I think.
   req.logout((err) => {
     if (err) {
       console.error('error when logging out', err);
     }
-    res.redirect('/');
+    res.redirect(UI_URL);
   });
 });
 

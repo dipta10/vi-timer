@@ -80,7 +80,6 @@ function processTracksResponse(
       timelineRows.push(todoRow);
       for (const track of tracks) {
         if (!track.endTime) {
-          console.log(`track with todo id ${todoId} is running`);
           continue;
         }
         const diff = track.endTime.getTime() - track.startTime.getTime();
@@ -89,10 +88,6 @@ function processTracksResponse(
       }
 
       todoRow.totalTimeSpent = Math.ceil(todoRow.totalTimeSpent);
-
-      console.log(
-        `total time spent for todoId ${todoId} is ${dayRow.totalTimeSpent}s`,
-      );
     }
     dayRow.totalTimeSpent = Math.ceil(dayRow.totalTimeSpent);
   }
