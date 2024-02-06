@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useSessionStore } from '../states/store';
+import axios from '@/utils/config';
 
 export function Layout() {
   // TODO: bring in the header in this outlet!
-  const { updateAccessToken } = useSessionStore();
+  const { clearSession } = useSessionStore();
 
   useEffect(() => {
     if (!('Notification' in window)) {
@@ -42,7 +43,15 @@ export function Layout() {
   }, []);
 
   useEffect(() => {
-    // updateAccessToken();
+    axios
+      .get('user')
+      .then(({ data }) => {
+        console.log('user is', data);
+      })
+      .catch((err) => {
+        console.log('error getting user info', err);
+        clearSession();
+      });
   }, []);
 
   return (

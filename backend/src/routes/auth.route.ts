@@ -42,13 +42,13 @@ router.get(
       id: dbUser.id,
     });
 
-    // TODO: take the value from .env file
     res.redirect(`${UI_URL}?accessToken=${accessToken}&name=${user.name}`);
   },
 );
 
 router.get('/logout', (req: Request, res: Response) => {
-  // TODO this is not proparly loggin out user from google account I think.
+  // TODO this is not proparly loggin out users from google account I think.
+  console.log('logging out user');
   req.logout((err) => {
     if (err) {
       console.error('error when logging out', err);

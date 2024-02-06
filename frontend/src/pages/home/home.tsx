@@ -10,13 +10,14 @@ import {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 import { fetchRunningTodo, fetchTodos } from '@/utils/todo.utils.ts';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar.tsx';
 import { TodoList } from '@/pages/todo-list/TodoList.tsx';
 import axios from '@/utils/config';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const { setRunningTodo, setTodos } = useTodoStore();
   const { currentTab, pushTab, setTab } = useTabStore();
   const { setTokenAndName, updateAccessToken } = useSessionStore();
@@ -34,12 +35,14 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('accessToken');
-    const name = urlParams.get('name') || 'Display Name Not Found';
+    const token = searchParams.get('accessToken');
+    const name = searchParams.get('name') || 'Display Name Not Found';
 
     if (token) {
       setTokenAndName(token, name);
+      searchParams.delete('accessToken');
+      searchParams.delete('name');
+      setSearchParams(searchParams);
     } else {
       updateAccessToken();
     }

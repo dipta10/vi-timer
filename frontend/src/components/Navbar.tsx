@@ -27,17 +27,6 @@ export function Navbar() {
     }
   }, [currentTab]);
 
-  // const onClickSecret = () => {
-  //   const token = localStorage.getItem('accessToken');
-  //   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  //   axios
-  //     .get(`/auth/secret`)
-  //     .then((res) => {
-  //       console.log(res);
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
-
   const logout = () => {
     window.location.href = `${import.meta.env.VITE_BACKEND_URL}/auth/logout`;
     localStorage.clear();

@@ -14,7 +14,6 @@ import './src/config/passport';
 
 // We can use the free tier of PlanetScale
 // https://blog.logrocket.com/organizing-express-js-project-structure-better-productivity/
-//
 dotenv.config();
 
 const app: Express = express();
@@ -42,7 +41,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/todo', verifyToken, todoRouter);
-app.use('/user', userRouter);
+app.use('/user', verifyToken, userRouter);
 app.use('/project', projectRoute);
 app.use('/auth', authRoute);
 app.get('/', (req: Request, res: Response) => {

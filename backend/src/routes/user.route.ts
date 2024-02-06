@@ -6,19 +6,15 @@ const router = Router();
 // will prisma get initialized on every single route??
 const prisma = new PrismaClient();
 
-router.get('/', async (_, res: Response) => {
-  const users = await prisma.user.findMany();
-  res.json(users);
+router.get('/', async (req: Request, res: Response) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: req.user?.id,
+    },
+  });
+  // throw new Error('not found!');
+  user!.googleId = '';
+  res.json(user);
 });
-
-// router.post('/', async (req, res: Response) => {
-//   const user = await prisma.user.create({
-//     data: {
-//       username: req.body.username,
-//     },
-//   });
-//
-//   res.json(user);
-// });
 
 export default router;
