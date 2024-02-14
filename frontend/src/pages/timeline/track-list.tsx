@@ -28,19 +28,21 @@ import { secondsToHms } from '@/utils/time.utils.ts';
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onSelectRow: (data: TData) => void;
 }
 
 export function TrackList<TData, TValue>({
   columns,
   data,
+  onSelectRow,
 }: DataTableProps<TData, TValue>) {
   // https://tanstack.com/table/v8/docs/examples/react/row-selection
   const [rowSelection, setRowSelection] = useState({});
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedTodo, setSelectedTodo] = useState<TodoEntity | null>(null);
+  const [selectedTodo] = useState<TodoEntity | null>(null);
   const [selectedRowRef, setSelectedRowRef] =
     useState<HTMLTableRowElement | null>(null);
-  const { currentTab, pushTab } = useTabStore();
+  const { currentTab } = useTabStore();
   const { isLoggedIn } = useSessionStore();
 
   const table = useReactTable({
@@ -75,6 +77,17 @@ export function TrackList<TData, TValue>({
   useHotkeys('up, k', () => onPressUp(), {
     enabled: currentTab === Tab.TIMELINE,
   });
+  useHotkeys(
+    `${Key.Enter}`,
+    () => {
+      const rowModel = table.getSelectedRowModel();
+      const track = rowModel.rows[0].original;
+      onSelectRow(track);
+    },
+    {
+      enabled: currentTab === Tab.TIMELINE,
+    },
+  );
 
   const editTodo = (value: Partial<TodoEntity>) => {
     console.log('value is', value);
@@ -164,7 +177,6 @@ export function TrackList<TData, TValue>({
             <TableRow>
               <TableCell colSpan={columns.length} className='h-24 text-center'>
                 {!isLoggedIn ? 'Please log In First!' : 'Not Todos Yet!'}
-                isLoggedIn: {isLoggedIn ? 'true' : 'false'}
               </TableCell>
             </TableRow>
           )}

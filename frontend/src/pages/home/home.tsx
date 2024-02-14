@@ -17,10 +17,8 @@ import axios from '@/utils/config';
 
 export default function Home() {
   const [open, setOpen] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
   const { setRunningTodo, setTodos } = useTodoStore();
   const { currentTab, pushTab, setTab } = useTabStore();
-  const { setTokenAndName, updateAccessToken } = useSessionStore();
   const navigate = useNavigate();
 
   useHotkeys(`${Key.Shift}+a`, () => onAddTaskBtnClick(), {
@@ -35,17 +33,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const token = searchParams.get('accessToken');
-    const name = searchParams.get('name') || 'Display Name Not Found';
-
-    if (token) {
-      setTokenAndName(token, name);
-      searchParams.delete('accessToken');
-      searchParams.delete('name');
-      setSearchParams(searchParams);
-    } else {
-      updateAccessToken();
-    }
     setTab(Tab.TASK_LIST);
     fetchRunningTodo(setRunningTodo);
   }, []);

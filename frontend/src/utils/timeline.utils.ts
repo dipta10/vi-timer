@@ -76,6 +76,7 @@ function processTracksResponse(
         title: tracks[0].todo.title,
         totalTimeSpent: 0,
         type: 'todo',
+        tracks: tracks,
       };
       timelineRows.push(todoRow);
       for (const track of tracks) {

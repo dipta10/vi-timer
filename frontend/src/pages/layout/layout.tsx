@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useSearchParams } from 'react-router-dom';
 import { useSessionStore } from '../states/store';
 import axios from '@/utils/config';
 
@@ -37,9 +37,24 @@ export function Layout() {
         .catch((e) => {
           console.error('unable to play notification sound', e);
         });
-    }, 1000 * 60 * 10); // 10 minutes
 
     return () => clearInterval(interval);
+  }, []);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { setTokenAndName, updateAccessToken } = useSessionStore();
+  useEffect(() => {
+    const token = searchParams.get('accessToken');
+    const name = searchParams.get('name') || 'Display Name Not Found';
+
+    if (token) {
+      setTokenAndName(token, name);
+      searchParams.delete('accessToken');
+      searchParams.delete('name');
+      setSearchParams(searchParams);
+    } else {
+      updateAccessToken();
+    }
   }, []);
 
   useEffect(() => {
