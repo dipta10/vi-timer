@@ -1,4 +1,7 @@
 import axios from 'axios';
+import { loadProgressBar } from 'axios-progress-bar';
+
+loadProgressBar(undefined, axios);
 
 // Set the base URL for your API
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
@@ -21,5 +24,6 @@ axios.interceptors.request.use(
     return Promise.reject(error);
   },
 );
+
 
 export default axios;

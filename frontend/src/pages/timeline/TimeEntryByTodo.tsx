@@ -18,7 +18,6 @@ const todoColumns: ColumnDef<Track>[] = [
       console.log('row is', row);
       const totalTimeInSeconds =
         row.original.endTime.getTime() - row.original.startTime.getTime();
-      // const totalTimeInSeconds = row.original.endTime - row.original.startTime;
       const timeStr = secondsToHms(totalTimeInSeconds / 1000);
       return (
         <div
@@ -32,7 +31,13 @@ const todoColumns: ColumnDef<Track>[] = [
   },
 ];
 
-export function TracksByTodo({ tracks }: { tracks: Track[] }) {
+export function TimeEntryByTodo({
+  tracks,
+  onSelectTimeEntry,
+}: {
+  tracks: Track[];
+  onSelectTimeEntry: (row: Track) => void;
+}) {
   const [rowSelection, setRowSelection] = useState({});
 
   const table: Table<Track> = useReactTable({
@@ -46,15 +51,11 @@ export function TracksByTodo({ tracks }: { tracks: Track[] }) {
     onRowSelectionChange: setRowSelection,
   });
 
-  const doSomething = (row: Track) => {
-    console.log(row);
-  };
-
   return (
     <ViTable
-      tabName={Tab.TRACK_LIST_BY_TODO}
+      tabName={Tab.TIME_ENTRY_BY_TODO}
       reactTable={table}
-      onSelectRow={doSomething}
+      onSelectRow={onSelectTimeEntry}
     />
   );
 }

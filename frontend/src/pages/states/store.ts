@@ -8,7 +8,7 @@ export enum Tab {
   ADD_TASK = 'ADD_TASK',
   TIMELINE = 'TIMELINE',
   OPEN_DIALOG = 'OPEN_DIALOG',
-  TRACK_LIST_BY_TODO = 'TRACK_LIST_BY_TODO',
+  TIME_ENTRY_BY_TODO = 'TIME_ENTRY_BY_TODO',
 }
 
 export interface WithId {

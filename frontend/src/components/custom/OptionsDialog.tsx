@@ -14,7 +14,7 @@ export interface DialogOption extends WithId {
   action?: () => void;
 }
 
-const todoColumns: ColumnDef<DialogOption>[] = [
+const optionsDialogColumns: ColumnDef<DialogOption>[] = [
   {
     accessorKey: 'value',
     header: () => <div className='text-left font-bold'>Select Action</div>,
@@ -34,9 +34,15 @@ interface OptionsDialogProps {
   open: boolean;
   setOpen: any;
   options: DialogOption[];
+  title?: string;
 }
 
-export function OptionsDialog({ open, setOpen, options }: OptionsDialogProps) {
+export function OptionsDialog({
+  open,
+  setOpen,
+  options,
+  title,
+}: OptionsDialogProps) {
   const [rowSelection, setRowSelection] = useState({});
   const { popTab } = useTabStore();
 
@@ -48,9 +54,19 @@ export function OptionsDialog({ open, setOpen, options }: OptionsDialogProps) {
     }
   }
 
+  if (title) {
+    optionsDialogColumns[0].header = () => (
+      <div className='text-left font-bold'>{title}</div>
+    );
+  } else {
+    optionsDialogColumns[0].header = () => (
+      <div className='text-left font-bold'>Select Action</div>
+    );
+  }
+
   const table: Table<DialogOption> = useReactTable({
     data: options,
-    columns: todoColumns,
+    columns: optionsDialogColumns,
     getCoreRowModel: getCoreRowModel(),
     enableRowSelection: true,
     state: {
