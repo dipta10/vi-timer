@@ -7,7 +7,7 @@ import { TrackList } from '@/pages/timeline/track-list.tsx';
 import { fetchTimeline } from '@/utils/timeline.utils.ts';
 import { trackColumnsByDay } from '@/pages/timeline/track-colums-by-day.tsx';
 import { Navbar } from '@/components/Navbar.tsx';
-import { TimelineRow } from '@/components/types/timeline';
+import { TimelineRow, TimeEntryRow } from '@/components/types/timeline';
 import { TimeEntryByTodo } from './TimeEntryByTodo';
 import { DialogOption, OptionsDialog } from '@/components/custom/OptionsDialog';
 
@@ -19,6 +19,8 @@ function Timeline() {
   // const [isTimeEntrySelected, setTimeEntrySelected] = useState(false);
   const [selectedTimelineRow, setSelectedTimelineRow] =
     useState<TimelineRow | null>(null);
+  const [selectedTimeEntry, setSelectedTimeEntry] =
+    useState<TimeEntryRow | null>(null);
   const [optionsDialogOpen, setOptionsDialogOpen] = useState(false);
 
   useHotkeys(`c`, () => navigate('/'), {
@@ -47,13 +49,12 @@ function Timeline() {
     setTodoSelected(true);
     setTab(Tab.TIME_ENTRY_BY_TODO);
   };
-
   const options: DialogOption[] = [
     {
       id: 1,
       value: 'Yes',
       action: () => {
-        console.log('delete entry');
+        console.log('delete entry', selectedTimeEntry?.id);
       },
     },
     {
@@ -63,10 +64,10 @@ function Timeline() {
     },
   ];
 
-  const onSelectTimeEntry = (row: any) => {
-    // setTimeEntrySelected(true);
+  const onSelectTimeEntry = (timeEntry: TimeEntryRow) => {
     pushTab(Tab.OPEN_DIALOG);
-    console.log('row is', row);
+    console.log('row is', timeEntry.id);
+    setSelectedTimeEntry(timeEntry);
     setOptionsDialogOpen(true);
   };
 

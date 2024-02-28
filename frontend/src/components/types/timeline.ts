@@ -1,10 +1,10 @@
-import { WithId } from "@/pages/states/store";
+import { WithId } from '@/pages/states/store';
 
 export type TimelineRow = {
   title: string;
   totalTimeSpent: number;
   type: 'todo' | 'day';
-  tracks?: Track[];
+  tracks?: TimeEntryRow[];
 };
 
 // export type TracksApiResponse = {
@@ -17,7 +17,7 @@ export type TimelineRow = {
 //   todo: Todo;
 // };
 
-export interface Track extends WithId {
+export interface TimeEntryRow extends WithId {
   value: string;
   startTime: Date;
   endTime: Date;

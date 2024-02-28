@@ -6,16 +6,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Track } from '@/components/types/timeline';
+import { TimeEntryRow } from '@/components/types/timeline';
 import { useState } from 'react';
 import { secondsToHms } from '@/utils/time.utils';
 
-const todoColumns: ColumnDef<Track>[] = [
+const todoColumns: ColumnDef<TimeEntryRow>[] = [
   {
     accessorKey: 'value',
     header: () => <div className='text-left font-bold'>Time Spent</div>,
     cell: ({ row }) => {
-      console.log('row is', row);
       const totalTimeInSeconds =
         row.original.endTime.getTime() - row.original.startTime.getTime();
       const timeStr = secondsToHms(totalTimeInSeconds / 1000);
@@ -35,12 +34,12 @@ export function TimeEntryByTodo({
   tracks,
   onSelectTimeEntry,
 }: {
-  tracks: Track[];
-  onSelectTimeEntry: (row: Track) => void;
+  tracks: TimeEntryRow[];
+  onSelectTimeEntry: (row: TimeEntryRow) => void;
 }) {
   const [rowSelection, setRowSelection] = useState({});
 
-  const table: Table<Track> = useReactTable({
+  const table: Table<TimeEntryRow> = useReactTable({
     data: tracks,
     columns: todoColumns,
     getCoreRowModel: getCoreRowModel(),

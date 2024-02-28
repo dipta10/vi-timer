@@ -12,7 +12,7 @@ export enum Tab {
 }
 
 export interface WithId {
-  id: number;
+  id: number | string;
 }
 
 export interface TodoEntity {
