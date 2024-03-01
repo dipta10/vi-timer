@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { TimelineRow } from '@/components/types/timeline.ts';
+import { processTracksResponse } from '@/utils/timeline.utils';
 
 export enum Tab {
   TASK_LIST = 'TASK_LIST',
@@ -28,7 +29,7 @@ export interface TodoEntity {
   createdAt: Date;
 }
 
-export type TimeTracking = {
+export type TimeEntry = {
   id: string;
   startTime: Date;
   endTime: Date;
@@ -37,15 +38,18 @@ export type TimeTracking = {
 
 export type TodoState = {
   todos: TodoEntity[];
-  runningTodo?: TodoEntity;
   setTodos: (todos: TodoEntity[]) => void;
+  runningTodo?: TodoEntity;
+  setRunningTodo: (todo: TodoEntity) => void;
   toggleTodo: (id: number) => void;
   toggleTimer: (id: number) => void;
-  timeline: TimeTracking[];
+
+  timeEntries: TimeEntry[];
+  deleteTimeEntry: (id: string) => void;
+  setTimeEntries: (tracks: TimeEntry[]) => void;
+
   timelineRows: TimelineRow[];
   setTimelineRows: (timelineRows: TimelineRow[]) => void;
-  setTimeline: (tracks: TimeTracking[]) => void;
-  setRunningTodo: (todo: TodoEntity) => void;
 };
 
 export interface TabState {
@@ -89,9 +93,20 @@ export const useTodoStore = create<TodoState>()(
   devtools(
     (set) => ({
       todos: [],
-      timeline: [],
+      timeEntries: [],
       timelineRows: [],
       // runningTodo: undefined,
+      deleteTimeEntry: (id) => {
+        set((state) => {
+          const timeEntries = state.timeEntries.filter((t) => t.id !== id);
+          const timelineRows = processTracksResponse(timeEntries);
+          return {
+            ...state,
+            timeEntries: timeEntries,
+            timelineRows: timelineRows,
+          };
+        });
+      },
       setTodos: (todos) =>
         set((state) => {
           todos = todos.map((t) => {
@@ -149,11 +164,11 @@ export const useTodoStore = create<TodoState>()(
             runningTodo: todo,
           };
         }),
-      setTimeline: (tracks) =>
+      setTimeEntries: (tracks) =>
         set((state) => {
           return {
             ...state,
-            timeline: tracks,
+            timeEntries: tracks,
           };
         }),
       setTimelineRows: (rows) =>

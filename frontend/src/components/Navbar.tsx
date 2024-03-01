@@ -48,7 +48,7 @@ export function Navbar() {
         >
           Timeline
         </Button>
-        {currentTab !== Tab.TIMELINE && (
+        {currentTab === Tab.TASK_LIST && (
           <Button
             className='border rounded-md px-4 py-2 bg-white text-slate-900 text-sm'
             onClick={onAddTaskBtnClick}

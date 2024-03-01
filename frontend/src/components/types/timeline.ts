@@ -1,10 +1,11 @@
 import { WithId } from '@/pages/states/store';
 
 export type TimelineRow = {
+  id: string;
   title: string;
   totalTimeSpent: number;
   type: 'todo' | 'day';
-  tracks?: TimeEntryRow[];
+  timeEntryRows: TimeEntryRow[];
 };
 
 // export type TracksApiResponse = {

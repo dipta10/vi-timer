@@ -22,15 +22,18 @@ export const todoColumns: ColumnDef<TodoEntity>[] = [
         <div
           className={`text-left ${className} flex flex-row gap-2 content-center items-center`}
         >
+          {/* {running && ( */}
+          {/*   <FontAwesomeIcon */}
+          {/*     style={{ */}
+          {/*       fontSize: 'x-large', */}
+          {/*       color: 'brown', */}
+          {/*     }} */}
+          {/*     className='fa-beat' */}
+          {/*     icon={faClock} */}
+          {/*   /> */}
+          {/* )} */}
           {running && (
-            <FontAwesomeIcon
-              style={{
-                fontSize: 'x-large',
-                color: 'brown',
-              }}
-              className='fa-beat'
-              icon={faClock}
-            />
+            <div className='animate-pulse w-4 h-4 bg-red-500 rounded-full duration-1000 self-center'></div>
           )}
           {title}
         </div>

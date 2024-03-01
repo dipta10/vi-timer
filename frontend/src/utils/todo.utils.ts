@@ -1,5 +1,5 @@
 import axios from '@/utils/config';
-import { TimeTracking, TodoEntity } from '@/pages/states/store.ts';
+import { TimeEntry, TodoEntity } from '@/pages/states/store.ts';
 
 export const fetchRunningTodo = (
   setRunningTodo: (todo: TodoEntity) => void,
@@ -8,7 +8,7 @@ export const fetchRunningTodo = (
     .get(`/todo/get-running`)
     .then(({ data: todo }) => {
       if (!todo) return;
-      const tracking = (todo as any).TimeTracking[0] as TimeTracking;
+      const tracking = (todo as any).TimeTracking[0] as TimeEntry;
       if (!tracking) return;
       todo.startTime = new Date(tracking.startTime);
       setRunningTodo(todo);

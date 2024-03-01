@@ -1,10 +1,10 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { TimeTracking } from '@/pages/states/store.ts';
+import { TimeEntry } from '@/pages/states/store.ts';
 import { secondsToHms } from '@/utils/time.utils.ts';
 import { CurrentTodoTimer } from '@/components/CurrentTodoTimer.tsx';
 import moment from 'moment';
 
-export const trackColumns: ColumnDef<TimeTracking>[] = [
+export const trackColumns: ColumnDef<TimeEntry>[] = [
   {
     accessorKey: 'title',
     header: () => <div className='text-left font-bold'>Title</div>,

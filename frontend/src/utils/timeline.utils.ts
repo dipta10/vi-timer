@@ -1,26 +1,19 @@
 import axios from '@/utils/config';
-import { TimeTracking } from '@/pages/states/store.ts';
+import { TimeEntry } from '@/pages/states/store.ts';
 import moment from 'moment';
 import { TimelineRow } from '@/components/types/timeline.ts';
 
 export function fetchTimeline(
-  setTimeline: (tracks: TimeTracking[]) => void,
+  setTimeEntries: (tracks: TimeEntry[]) => void,
   setTimelineRows: (tracks: TimelineRow[]) => void,
 ) {
   axios
     .get(`${import.meta.env.VITE_BACKEND_URL}/todo/timeline`)
     .then(({ data }) => {
       data = sanitizeTracksResponse(data);
-      processTracksResponse(data, setTimelineRows);
-      data.push({
-        title: 'dummmy',
-        startTime: new Date(),
-        endTime: new Date(),
-        todo: {
-          title: 'dummmy',
-        },
-      });
-      setTimeline(data);
+      const timelineRows = processTracksResponse(data);
+      setTimelineRows(timelineRows);
+      setTimeEntries(data);
     })
     .catch((err) => {
       console.log(err);
@@ -37,10 +30,9 @@ function sanitizeTracksResponse(data: any) {
   return data;
 }
 
-function processTracksResponse(
-  data: any,
-  setTimelineRows: (tracks: TimelineRow[]) => void,
-) {
+export function processTracksResponse(
+  data: TimeEntry[],
+): TimelineRow[] {
   const dates: any = {};
   const keyDateFormat = 'Y-M-D';
 
@@ -62,28 +54,34 @@ function processTracksResponse(
     .sort((a: any, b: any) => a - b)
     .reverse()
     .map((d) => moment(d).format(keyDateFormat));
+
   for (const dateStr of sortedDates) {
+    const dayStr = moment(dateStr, keyDateFormat).format('Do MMM, Y');
     const dayRow: TimelineRow = {
-      title: moment(dateStr, keyDateFormat).format('Do MMM, Y'),
+      id: dayStr,
+      title: dayStr,
       totalTimeSpent: 0,
       type: 'day',
+      timeEntryRows: [],
     };
     timelineRows.push(dayRow);
 
     for (const todoId of Object.keys(dates[dateStr])) {
-      const tracks = dates[dateStr][todoId];
+      const timeEntries = dates[dateStr][todoId];
       const todoRow: TimelineRow = {
-        title: tracks[0].todo.title,
+        id: `${dateStr}-${todoId}`,
+        title: timeEntries[0].todo.title,
         totalTimeSpent: 0,
         type: 'todo',
-        tracks: tracks,
+        timeEntryRows: timeEntries,
       };
       timelineRows.push(todoRow);
-      for (const track of tracks) {
-        if (!track.endTime) {
+      for (const timeEntry of timeEntries) {
+        if (!timeEntry.endTime) {
           continue;
         }
-        const diff = track.endTime.getTime() - track.startTime.getTime();
+        const diff =
+          timeEntry.endTime.getTime() - timeEntry.startTime.getTime();
         dayRow.totalTimeSpent += diff / 1000;
         todoRow.totalTimeSpent += diff / 1000;
       }
@@ -93,7 +91,5 @@ function processTracksResponse(
     dayRow.totalTimeSpent = Math.ceil(dayRow.totalTimeSpent);
   }
 
-  setTimelineRows(timelineRows);
-
-  return data;
+  return timelineRows;
 }

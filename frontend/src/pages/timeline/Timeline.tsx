@@ -10,12 +10,19 @@ import { Navbar } from '@/components/Navbar.tsx';
 import { TimelineRow, TimeEntryRow } from '@/components/types/timeline';
 import { TimeEntryByTodo } from './TimeEntryByTodo';
 import { DialogOption, OptionsDialog } from '@/components/custom/OptionsDialog';
+import axios from '@/utils/config';
 
 function Timeline() {
   const navigate = useNavigate();
-  const { setTimeline, setTimelineRows, timelineRows } = useTodoStore();
-  const { setTab, pushTab, currentTab } = useTabStore();
-  const [isTodoSelected, setTodoSelected] = useState(false);
+  const {
+    setTimeEntries,
+    setTimelineRows,
+    timelineRows,
+    deleteTimeEntry,
+    timeEntries,
+  } = useTodoStore();
+  const { setTab, pushTab, currentTab, popTab } = useTabStore();
+  const [isTodoSelected, setIsTodoSelected] = useState(false);
   // const [isTimeEntrySelected, setTimeEntrySelected] = useState(false);
   const [selectedTimelineRow, setSelectedTimelineRow] =
     useState<TimelineRow | null>(null);
@@ -31,7 +38,7 @@ function Timeline() {
   useHotkeys(
     `Esc`,
     () => {
-      setTodoSelected(false);
+      setIsTodoSelected(false);
       setTab(Tab.TIMELINE);
     },
     {
@@ -40,21 +47,41 @@ function Timeline() {
   );
   useEffect(() => {
     setTab(Tab.TIMELINE);
-    fetchTimeline(setTimeline, setTimelineRows);
+    fetchTimeline(setTimeEntries, setTimelineRows);
   }, []);
 
-  const onSelectTodo = (data: TimelineRow) => {
-    if (!data.tracks) return;
+  useEffect(() => {
+    if (selectedTimelineRow) {
+      const updatedRow = timelineRows.find(
+        (row) => row.id === selectedTimelineRow.id,
+      );
+      if (!updatedRow) {
+        setIsTodoSelected(false);
+        popTab();
+      }
+      setSelectedTimelineRow(updatedRow ? updatedRow : null);
+    }
+  }, [timeEntries]);
+
+  const onSelectTimeline = (data: TimelineRow) => {
+    if (!data.timeEntryRows) return;
     setSelectedTimelineRow(data);
-    setTodoSelected(true);
-    setTab(Tab.TIME_ENTRY_BY_TODO);
+    setIsTodoSelected(true);
+    pushTab(Tab.TIME_ENTRY_BY_TODO);
   };
+
   const options: DialogOption[] = [
     {
       id: 1,
       value: 'Yes',
       action: () => {
-        console.log('delete entry', selectedTimeEntry?.id);
+        const id = selectedTimeEntry?.id;
+        if (!id) return;
+        axios
+          .delete(`${import.meta.env.VITE_BACKEND_URL}/time-entry/${id}`)
+          .then(() => {
+            deleteTimeEntry(id as string);
+          });
       },
     },
     {
@@ -79,19 +106,13 @@ function Timeline() {
           <TrackList
             columns={trackColumnsByDay}
             data={timelineRows}
-            onSelectRow={onSelectTodo}
+            onSelectRow={onSelectTimeline}
           />
         )}
-        {isTodoSelected && (
-          <h3>
-            {selectedTimelineRow?.title +
-              ' ' +
-              selectedTimelineRow?.totalTimeSpent}
-          </h3>
-        )}
-        {isTodoSelected && selectedTimelineRow?.tracks && (
+        {isTodoSelected && selectedTimelineRow?.timeEntryRows && (
           <TimeEntryByTodo
-            tracks={selectedTimelineRow?.tracks}
+            timelineRow={selectedTimelineRow}
+            timeEntryRows={selectedTimelineRow?.timeEntryRows}
             onSelectTimeEntry={onSelectTimeEntry}
           />
         )}
