@@ -17,6 +17,7 @@ COPY frontend/tsconfig.json .
 COPY frontend/tsconfig.node.json .
 COPY frontend/vite.config.ts .
 COPY frontend/.env .
+COPY frontend/axios-progress-bar.d.ts .
 
 EXPOSE 3000
 

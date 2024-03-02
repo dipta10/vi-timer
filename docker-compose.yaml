@@ -10,6 +10,8 @@ services:
       - ./backend/prisma/dev.db:/opt/app/prisma/dev.db
     ports:
       - "8000:8000"
+    environment:
+      NODE_ENV: development
 
   frontend:
     build:

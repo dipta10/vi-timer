@@ -37,6 +37,7 @@ export function Layout() {
         .catch((e) => {
           console.error('unable to play notification sound', e);
         });
+    }, 1000 * 60 * 5); // 5 minutes;
 
     return () => clearInterval(interval);
   }, []);
@@ -44,8 +45,13 @@ export function Layout() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { setTokenAndName, updateAccessToken } = useSessionStore();
   useEffect(() => {
-    const token = searchParams.get('accessToken');
-    const name = searchParams.get('name') || 'Display Name Not Found';
+    let token = searchParams.get('accessToken');
+    let name = searchParams.get('name') || 'Display Name Not Found';
+    if (window.location.href.includes('localhost')) {
+      console.log('setting up local account....');
+      token = 'test-token';
+      name = 'Test User';
+    }
 
     if (token) {
       setTokenAndName(token, name);

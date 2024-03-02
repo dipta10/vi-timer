@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { PrismaClient } from '@prisma/client';
+import { PRODUCTION } from '../utils/secrets';
 
 const router = Router();
 
@@ -12,7 +13,9 @@ router.get('/', async (req: Request, res: Response) => {
       id: req.user?.id,
     },
   });
-  // throw new Error('not found!');
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
   user!.googleId = '';
   res.json(user);
 });

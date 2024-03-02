@@ -21,6 +21,15 @@ export const verifyToken = (
   res: Response,
   next: NextFunction,
 ) => {
+  if (!PRODUCTION) {
+    req.user = {
+      id: 'test-id',
+      name: 'Dev User',
+      googleId: 'test-google-id',
+    };
+    next();
+    return;
+  }
   const barrierToken = req.headers.authorization;
 
   if (!barrierToken) {
