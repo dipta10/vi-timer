@@ -37,6 +37,7 @@ export function Layout() {
         .catch((e) => {
           console.error('unable to play notification sound', e);
         });
+    }, 1000 * 60 * 15);
 
     return () => clearInterval(interval);
   }, []);
